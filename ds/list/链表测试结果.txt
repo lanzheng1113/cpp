@@ -1,0 +1,39 @@
+
+D:\ds\list>SLL
+µ•¡¥±Ì≤‚ ‘:
+init content:           SLL [3 7 4 5 9 ]
+remove 3:               SLL [7 4 5 9 ]
+remove 9:               SLL [7 4 5 ]
+contain -1?:            no
+contain 4?:             yes
+remove head:            SLL [4 5 ]
+add tail 12:            SLL [4 5 12 ]
+list size:              3
+remove 5:               SLL [4 12 ]
+remove tail:            SLL [4 ]
+delete list:            Free SLL space
+—≠ª∑µ•¡¥±Ì≤‚ ‘:
+init content:           CSLL [3 7 4 5 9]
+remove 3:               CSLL [7 4 5 9]
+remove 9:               CSLL [7 4 5]
+contain -1?:            no
+contain 4?:             yes
+remove head:            CSLL [4 5]
+add tail 12:            CSLL [4 5 12]
+list size:              3
+remove 5:               CSLL [4 12]
+remove tail:            CSLL [4]
+delete list:            Free CSLL space
+—≠ª∑À´¡¥±Ì≤‚ ‘:
+init content:           CDLL [3 7 4 5 9]
+inverse print:          CDLL [9 5 4 7 3]
+remove 3:               CDLL [7 4 5 9]
+remove 9:               CDLL [7 4 5]
+contain -1?:            no
+contain 4?:             yes
+remove head:            CDLL [4 5]
+add tail 12:            CDLL [4 5 12]
+list size:              3
+remove 5:               CDLL [4 12]
+remove tail:            CDLL [4]
+delete list:            Free CDLL space

@@ -1,0 +1,7 @@
+a = b+(c-d)*(e-f);
+g[10] = h[i[9]]/(j+k)*m;
+while(m < (n[8]+k))
+{
+	p = 7;/*** initialize p **/
+	r = 6;
+}

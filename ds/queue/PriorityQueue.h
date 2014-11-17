@@ -1,0 +1,98 @@
+#ifndef _PRIORITY_QUEUE_H_
+#define _PRIORITY_QUEUE_H_
+
+#include <functional>   // std::less
+#include <exception>
+#include "Queue.h"
+
+#define INIT_LENGTH 16
+
+template<typename T,typename Compare=std::less<T> >
+class PriorityQueue : public Queue<T>
+{
+public:
+	PriorityQueue():index(0),capacity(INIT_LENGTH)
+	{
+	   queue = new T[capacity];
+	}
+	void clear()
+	{
+		index = 0;
+	}
+	int getLength()
+	{
+		return index;
+	}
+    bool isEmpty()
+	{
+		return index == 0;
+	}
+	T dequeue();
+	void enqueue(T data);
+private:
+	void resize(int cap);
+private:
+	T*  queue;
+    int capacity;
+    int index;
+};
+
+
+template<typename T,typename Compare>
+void PriorityQueue<T,Compare>::enqueue(T data)
+{
+	if(index >= capacity)
+	{
+		resize(2*capacity);	//resize as needed
+	}
+	queue[index] = data;
+	index++;
+}
+
+template<typename T,typename Compare>
+T PriorityQueue<T,Compare>::dequeue()
+{
+	if(index == 0)
+	{
+	   std::cerr<<"logic error : dequeue at empty queue. "<<std::endl;
+	   throw std::logic_error("dequeue at empty queue");
+	}
+	//pick up one with highest priority 
+	int highIndex = 0;
+	for(int i = 1;i < index ;i++)	// O(n)
+	{
+		if(	Compare()( queue[i],queue[highIndex] ) )
+			highIndex = i;
+	}
+	T result = queue[highIndex];
+	index--;
+	queue[highIndex] = queue[index];	//put the last element to the removed position
+	
+	return result;
+}
+
+template<typename T,typename Compare>
+void PriorityQueue<T,Compare>::resize(int cap)
+{  
+	T *mem = 0;
+	try
+	{
+		mem = new T[cap];
+	}
+	catch (const std::bad_alloc& ba)
+	{
+		std::cerr << "queue out of memory " << ba.what() <<std::endl;
+		delete[] queue;
+		throw;
+	}
+	if(mem != 0)
+	{
+		std::copy(queue,queue+index,mem);	//copy elements
+		delete[] queue;	//release old memory
+		queue = mem;	//reset queue pointer
+		capacity = cap;	//update capacity
+	}
+	std::cout<<"resized "<<std::endl;
+}
+#endif
+

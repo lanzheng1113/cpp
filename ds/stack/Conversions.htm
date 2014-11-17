@@ -1,0 +1,287 @@
+<HTML>
+
+<HEAD>
+  <TITLE>Conversions </TITLE>
+
+<script language= "JAVASCRIPT" SRC="./html/header2.js" >
+</script>
+
+</HEAD>
+
+
+<BODY bgcolor="#ffffff" text="#000000">
+
+<table align = "center">
+<tr><td><IMG SRC="../../gifs/appinventor_logo.gif" align=left></td>
+<td>
+<H2>
+<a href="http://www.cs.trincoll.edu/~ram/cpsc110/">CPSC 110-08: Computing on Mobile Phones</a><BR>
+Spring 2012<br>
+<hr>
+Number Conversion Algorithms
+</H2>
+</td>
+</tr>
+</table>
+
+<h3>CS Principles</h3>
+
+This activity introduces the concept that <i>abstractions built upon
+binary sequences can be used to represent all digital data
+</i>.  It also introduces the concept of an <i>algorithm</i>. It
+focuses on the following learning objectives:
+
+<ul>
+<li>5b. Explanation of how number bases, including binary and decimal, are used for reasoning about digital data.
+<li>16a. Use of natural language, pseudo-code, or a visual or textual programming language to express an algorithm.
+</ul>
+
+<h3>
+Introduction
+</h3>
+
+<p>This lesson assumes you have completed
+the <a href="../homework/hw-binary.html">homework on binary and
+hexadecimal number systems</a>.  That homework decribed how the
+binary, decimal, and hexadecimal number systems work and showed how to
+convert from one number system to another.
+
+<p>In this lesson we want generalize what we learned their by seeing
+those number systems as specific examples of a more general concept,
+a <i>positional number system</i>.
+
+<p>We will develop <i>algorithms</i> that will enable you to perform
+conversions from one number system to another.
+
+<p>The type of generalization we are doing in this lesson is another
+example of the <i>abstraction principle</i> in computer science --
+here we are focusing on a general pattern that holds true for all
+positional number systems.
+
+<h3>Algorithms and Pseudocode</h3>
+
+<p>An <a href="http://en.wikipedia.org/wiki/Algorithm">algorithm</a>
+is a step-by-step procedure to perform some computation.  For example,
+the steps you take in the <i>Hello Purr</i> app when the button is
+clicked is an example of a simple 2-step algorithm:
+<br><blockquote><img src="./gifs/onbuttonclick.png"></blockquote>
+
+<p>To help us talk about algorithms we will
+use <a href="http://en.wikipedia.org/wiki/Pseudocode">pseudocode</a>,
+a language or notation that has many of the structures of a
+programming language but is easy to read.  Pseudocdes are halfway
+between natural languages like English and formal programming
+languages.
+
+<h3>Positional Number Systems</h3>
+
+<p>Let's review some of the key points that you learned in the Khan
+Academy videos.
+
+<ul>
+<p><li>Our decimal number system (and the binary and hexadecimal
+systems) are particular instances of the more general concept of
+a <a href="http://en.wikipedia.org/wiki/Positional_notation">positional
+number system</a>.
+
+<p><li>In a positional number system the same symbol can represent
+different values depending on its <i>position</i> (or <i>place</i>) in
+the numeral.  For example, in 91, the 9 represents 90 (the 10s place)
+but in 19 it represents 9 (the ones place).  Contrast this with how
+symbols work in a non-positional system, like Roman numerals, where X
+always represents 10.
+
+<p><li>The <i>base</i> of a number system represents the number of
+symbols it has:
+<table border=1>
+<tr><th>Name</th><td>Base</th><th>Symbols</th></tr>
+<tr><td>Decimal</td><td>10</td><td> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</td></tr>
+<tr><td>Binary</td><td> 2</td><td> 0,  1</td></tr>
+<tr><td>Hexadecimal</td><td>16</td><td> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F</td></tr>
+<tr><td>Octal</td><td> 8</td><td> 0, 1, 2, 3, 4, 5, 6, 7</td></tr>
+</table>
+
+
+<p><li>Positional number systems use <i>exponentiation</i> to
+determine a symbol's value based on its place.  We can use this
+idea to convert from any system into the decimal system:
+
+<table border=1>
+<tr><th>System</th><th>Base</th><th> Value</th><th>Conversion Formula </th><th>Decimal Value</th></tr>
+<tr><td>Decimal</td><td>10</td><td> 104</td><td> (1 &times; 10<sup>2</sup>) + (0 &times; 10<sup>1</sup>) + (4 &times; 10<sup>0</sup>) </td><td> 100 + 0 + 4 = 104</td></tr>
+<tr><td>Binary</td><td>2</td><td> 111</td><td> (1 &times; 2<sup>2</sup>) + (1 &times; 2<sup>1</sup>) + (1 &times; 2<sup>0</sup>) </td><td> 4 + 2 + 1 = 7</td></tr>
+<tr><td>Octal</td><td>8</td><td> 104</td><td> (1 &times; 8<sup>2</sup>) + (0 &times; 8<sup>1</sup>) + (4 &times; 8<sup>0</sup>) </td><td>  64 + 0 + 4  = 68</td></tr>
+<tr><td>Hexadecimal</td><td>16</td><td> FEC</td><td>  (F &times; 16<sup>2</sup>) + (E &times; 16<sup>1</sup>) + (C &times; 8<sup>0</sup>) </td><td>  15 &times; 256 + 14 &times; 16 + 12 &times; 1 = 3840 + 224 + 12 = 4076</td></tr>
+</table>
+
+</ul>
+
+<h3>Conversion Algorithms</h3>
+
+<p>Let's summarize these conversion formulas by developing
+an general algorithm that will convert from any base into decimal.
+
+<h3>Algorithm to Convert From Any Base to Base 10 Decimal</h3>
+
+<ol>
+<li>Let <i>n</i> be the number of digits in the number.  For example, 104 has 3 digits, so <i>n=3</i>.
+<li>Let <i>b</i> be the base of the number.  For example, 104 is decimal so <i>b = 10</i>.
+<li>Let <i>s</i> be a running total, initially 0.
+<li>For each digit in the number, working left to right do:
+<br>&nbsp;&nbsp; Subtract 1 from <i>n</i>.
+<br>&nbsp;&nbsp; Multiply the digit times <i>b<sup>n</sup></i> and add it to <i>s</i>.
+<li> When your done with all the digits in the number, its decimal value will be <i>s</i>
+</ol>
+
+<p>Let's try it on the binary number 1011.
+<blockquote>
+<pre>
+Let n = 4.
+Let b = 2.
+Let s = 0.
+   First digit,  1: n = 3, 1 &times; b<sup>n</sup> is 1 &times; 2<sup>3</sup> = 8. So s = 8. 
+   Second digit, 0: n = 2, 0 &times; b<sup>n</sup> is 0 &times; 2<sup>2</sup> = 0. So s = 8.
+   Third digit,  1: n = 1, 1 &times; b<sup>n</sup> is 1 &times; 2<sup>1</sup> = 2. So s = 10
+   Last digit,   1: n = 0, 1 &times; b<sup>n</sup> is 1 &times; 2<sup>0</sup> = 1. <font color="red">So 1011<sub>2</sub> = 11<sub>10</sub></font>
+</pre>
+
+<table border=1>
+<tr><th>Digit</th><th>&nbsp;n&nbsp;</th><th>Value = Digit * b<sup>n</sup></th><th>Running Total</th></tr>
+<tr><td align="center">1</td><td align="center">3</td><td align="center">1 &times; 2<sup>3</sup> = 8</td><td align="center">8</td></tr>
+<tr><td align="center">0</td><td align="center">2</td><td align="center">0 &times; 2<sup>2</sup> = 0</td><td align="center">8</td></tr>
+<tr><td align="center">1</td><td align="center">1</td><td align="center">1 &times; 2<sup>1</sup> = 2</td><td align="center">10</td></tr>
+<tr><td align="center">1</td><td align="center">0</td><td align="center">1 &times; 2<sup>0</sup> = 1</td><td align="center"><font color="red">11</font></td></tr>
+</table>
+</blockquote>
+
+<p>Let's try it on the hex number 7E.
+<blockquote>
+<pre>
+Let n = 2.
+Let b = 16.
+Let s = 0.
+   First digit, 7: n = 1, 7 &times; b<sup>n</sup> is 7 &times; 16<sup>1</sup> = 7 &times; 16 = 112. So s = 112. 
+   Last digit,  E: n = 0, 14 &times; b<sup>n</sup> is 14 &times; 16<sup>0</sup> = 14. So s = 112 + 14 = 126. <font color="red">So 7E<sub>16</sub> = 126<sub>10</sub></font>
+</pre>
+
+<table border=1>
+<tr><th>Digit</th><th>&nbsp;n&nbsp;</th><th>Value = Digit * b<sup>n</sup></th><th>Running Total</th></tr>
+<tr><td align="center">7</td><td align="center">1</td><td align="center">7 &times; 16<sup>1</sup> = 112</td><td align="center">114</td></tr>
+<tr><td align="center">E</td><td align="center">0</td><td align="center">14 &times; 16<sup>0</sup> = 14</td><td align="center"><font color="red">126</font></td></tr>
+</table>
+
+
+</blockquote>
+
+<p>Let's try it on the octal number 124.
+<blockquote>
+<pre>
+Let n = 3.
+Let b = 8.
+Let s = 0.
+   First digit,  1: n = 2, 1 &times; b<sup>n</sup> is 1 &times; 8<sup>2</sup> = 1 &times; 64 = 64. So s = 64. 
+   Second digit, 2: n = 1, 2 &times; b<sup>n</sup> is 2 &times; 8<sup>1</sup> = 2 &times; 8 = 16. So s = 64 + 16 = 80. 
+   Last digit,   4: n = 0, 4 &times; b<sup>n</sup> is 4 &times; 8<sup>0</sup> = 4. So s = 80 + 4 = 84. <font color="red">So 124<sub>8</sub> = 84<sub>10</sub></font>
+</pre>
+
+<table border=1>
+<tr><th>Digit</th><th>&nbsp;n&nbsp;</th><th>Value = Digit * b<sup>n</sup></th><th>Running Total</th></tr>
+<tr><td align="center">1</td><td align="center">2</td><td align="center">1 &times; 8<sup>2</sup> = 64</td><td align="center">64</td></tr>
+<tr><td align="center">2</td><td align="center">1</td><td align="center">2 &times; 8<sup>1</sup> = 16</td><td align="center">80</td></tr>
+<tr><td align="center">4</td><td align="center">0</td><td align="center">4 &times; 8<sup>0</sup> = 4</td><td align="center"><font color="red">84</font></td></tr>
+</table>
+
+</blockquote>
+
+
+<h3>Algorithm to Convert From Decimal To Another Base</h3>
+
+<ol>
+<li>Let <i>n</i> be the decimal number.
+<li>Let <i>m</i> be the number, initially empty, that we are converting to. We'll be composing it right to left.
+<li>Let <i>b</i> be the <i>base</i> of the number we are converting to.
+<li>Repeat until n becomes 0
+<br>&nbsp;&nbsp;   Divide <i>n</i> by <b><i>b</i></b>, letting the result be <i>d</i> and the remainder be <i>r</i>.
+<br>&nbsp;&nbsp;   Write the remainder, r, as the <u>leftmost</u> digit of <i>b</i>.
+<br>&nbsp;&nbsp;   Let <i>d</i> be the new value of <i>n</i>.
+</ol>
+
+<p>Let's use the algorithm to convert 45 into binary.
+<blockquote>
+<pre>
+Let n = 45.
+Let b = 2.
+Repeat
+   45 divided by b is 45/2 = 22 remainder 1. So <i>d=22</i> and <i>r=1</i>. So <i>m=     1</i> and the new <i>n</i> is 22.
+   22 divided by b is 22/2 = 11 remainder 0. So <i>d=11</i> and <i>r=1</i>. So <i>m=    01</i> and the new <i>n</i> is 11.
+   11 divided by b is 11/2 =  5 remainder 1. So <i>d=5</i>  and <i>r=1</i>. So <i>m=   101</i> and the new <i>n</i> is 5.
+    5 divided by b is 5/2  =  2 remainder 1. So <i>d=2</i>  and <i>r=1</i>. So <i>m=  1101</i> and the new <i>n</i> is 2.
+    2 divided by b is 2/2  =  1 remainder 0. So <i>d=1</i>  and <i>r=0</i>. So <i>m= 01101</i> and the new <i>n</i> is 1.
+    1 divided by b is 1/2  =  0 remainder 1. So <i>d=0</i>  and <i>r=1</i>. So <i>m=101101</i> and the new <i>n</i> is 0. <font color="red">So 45<sub>10</sub> = 101101<sub>2</sub></font>
+</pre>
+</blockquote>
+
+<p>Let's use it to convert 99 into binary.
+
+<blockquote>
+<pre>
+Let n = 99.
+Let b = 2.
+Repeat
+   99 divided by b is 99/2 = 49 remainder 1. So <i>d=49</i> and <i>r=1</i>. So <i>m=      1</i> and the new <i>n</i> is 49.
+   49 divided by b is 49/2 = 24 remainder 1. So <i>d=24</i> and <i>r=1</i>. So <i>m=     11</i> and the new <i>n</i> is 24.
+   24 divided by b is 24/2 = 12 remainder 0. So <i>d=12</i> and <i>r=0</i>. So <i>m=    011</i> and the new <i>n</i> is 12.
+   12 divided by b is 12/2 =  6 remainder 0. So <i>d=6</i>  and <i>r=0</i>. So <i>m=   0011</i> and the new <i>n</i> is 6.
+    6 divided by b is  6/2 =  3 remainder 0. So <i>d=3</i>  and <i>r=0</i>. So <i>m=  00011</i> and the new <i>n</i> is 3.
+    3 divided by b is  3/2 =  1 remainder 1. So <i>d=1</i>  and <i>r=1</i>. So <i>m= 100011</i> and the new <i>n</i> is 1. 
+    1 divided by b is  1/2 =  0 remainder 1. So <i>d=0</i>  and <i>r=1</i>. So <i>m=1100011</i> and the new <i>n</i> is 0.  <font color="red">So 99<sub>10</sub> = 1100011<sub>2</sub></font>
+
+</pre>
+</blockquote>
+
+<p>Let's use it to  convert 45 into hexadecimal.
+<blockquote>
+<pre>
+Let n = 45.
+Let b = 16.
+Repeat
+   45 divided by b is 45/16 = 2 remainder 13. So <i>d=2</i> and <i>r=13</i>. So <i>m= D</i> and the new <i>n</i> is 2.
+    2 divided by b is  2/16 = 0 remainder  2. So <i>d=0</i> and <i>r=2</i>.  So <i>m=2D</i> and the new <i>n</i> is 0. <font color = "red">So 45<sub>10</sub> = 2D<sub>16</sub>.</font> 
+</pre>
+</blockquote>
+
+<p>Let's use it to convert 99 into hexadecimal.
+<blockquote>
+<pre>
+Let n = 99.
+Let b = 16.
+Repeat
+   99 divided by b is 99/16 = 6 remainder 3. So <i>d=6</i> and <i>r=3</i>. So <i>m= 3</i> and the new <i>n</i> is 6.
+    6 divided by b is  6/16 = 0 remainder 6. So <i>d=0</i> and <i>r=6</i>. So <i>m=63</i> and the new <i>n</i> is 0. <font color="red">So 99<sub>10</sub> is 63<sub>16</sub>.</font>
+</pre>
+</blockquote>
+
+<h3>In-class Exercises</h3>
+
+<ol>
+<li>Convert the following numbers to decimal notation.
+<ol type="a">
+<li>The binary number 111.
+<li>The binary number 1011.
+<li>The binary number 1011 1011.
+<li>The hex number 61.
+<li>The hex number DA.
+<li>The hex number FEE.
+</ol>
+<li>Convert the following decimal numbers as indicated.
+<ol type="a">
+<li>Convert decimal 12 to binary.
+<li>Convert decimal 44 to binary.
+<li>Convert decimal 254 to hex.
+<li>Convert decimal 16 to hex.
+</ol>
+<li>Challenge: Convert decimal 125 to <i>octal</i> (base 8) notation.
+</ol>
+
+</body>
+</html>
