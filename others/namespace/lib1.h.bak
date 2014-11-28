@@ -1,0 +1,7 @@
+//user library 1
+namespace Libone
+{
+class String
+{
+};
+}

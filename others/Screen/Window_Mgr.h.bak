@@ -1,0 +1,11 @@
+#ifndef _WINDOW_MGR_H_
+#define _WINDOW_MGR_H_
+
+#include "Screen.h"
+
+
+class Window_Mgr{
+public:
+	Window_Mgr& relocate(Screen::index r,Screen::index c Screen& s);
+};
+#endif
