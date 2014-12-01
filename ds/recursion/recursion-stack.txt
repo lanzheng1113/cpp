@@ -1,0 +1,13 @@
+int main()
+{
+  /*102*/ int n = factr(3);
+  /*103*/ std::cout << "Factorial of "<<n<<" : "<<factr(n)<<std::endl;
+
+}
+//using recursion
+/*201*/ int factr(int n)
+{
+/*202*/  if ( n == 0) 
+/*203*/      return 1;
+/*204*/  return n*factr(n-1);
+}

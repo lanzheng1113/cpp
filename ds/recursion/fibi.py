@@ -18,6 +18,7 @@ if __name__ == "__main__":
     for n in list( map(int,sys.argv[1:]) ):
         start_time = time.time() # record start time
         ret = fibi(n) 
+        print(fibi(n))
         print("fib({})={}\n".format(n,ret),
          "\tconsumed %s ms\n"% ((time.time()-start_time)*1000)  )
         print('*'*50)

@@ -1,0 +1,111 @@
+//c++实现
+
+递归计算时间
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -r 20
+Recursion,Fib(20)=6765
+	 call function fibr 21891 times
+
+real	0m0.003s
+user	0m0.000s
+sys	0m0.000s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -r 30
+Recursion,Fib(30)=832040
+	 call function fibr 2692537 times
+
+real	0m0.044s
+user	0m0.040s
+sys	0m0.004s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -r 40
+Recursion,Fib(40)=102334155
+	 call function fibr 331160281 times
+
+real	0m4.362s
+user	0m4.288s
+sys	0m0.024s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -r 45
+Recursion,Fib(45)=1134903170
+	 call function fibr 3672623805 times
+
+real	0m48.595s
+user	0m47.916s
+sys	0m0.108s
+迭代计算时间:
+
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -i 20
+Iteration,Fib(20)=6765
+
+real	0m0.004s
+user	0m0.000s
+sys	0m0.000s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -i 30
+Iteration,Fib(30)=832040
+
+real	0m0.003s
+user	0m0.000s
+sys	0m0.000s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -i 40
+Iteration,Fib(40)=102334155
+
+real	0m0.003s
+user	0m0.000s
+sys	0m0.000s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time ./fib -i 45
+Iteration,Fib(45)=1134903170
+
+real	0m0.003s
+user	0m0.000s
+sys	0m0.000s
+
+//python实现
+递归实现
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibr.py 20
+6765
+
+real	0m0.076s
+user	0m0.044s
+sys	0m0.004s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibr.py 30
+832040
+
+real	0m0.696s
+user	0m0.676s
+sys	0m0.008s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibr.py 40
+102334155
+
+real	1m23.854s
+user	1m21.608s
+sys	0m0.224s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibr.py 45
+KeyboardInterrupt
+
+real	8m17.686s
+user	8m15.700s
+sys	0m1.472s
+
+迭代实现
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibi.py 20
+6765
+
+real	0m0.037s
+user	0m0.028s
+sys	0m0.008s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibi.py 30
+832040
+
+real	0m0.037s
+user	0m0.028s
+sys	0m0.004s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibi.py 40
+102334155
+
+real	0m0.041s
+user	0m0.028s
+sys	0m0.008s
+wangdq@wangdq:~/gitbk/cpp/ds/recursion$ time python3 fibi.py 45
+1134903170
+
+real	0m0.040s
+user	0m0.036s
+sys	0m0.000s
+

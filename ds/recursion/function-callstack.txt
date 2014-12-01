@@ -1,0 +1,31 @@
+int main()
+{
+
+      int m,n;
+      ...
+ /*110*/ first(m,n);
+ /*111*/ ...
+      
+}
+
+int first(int s,int t)
+
+{
+
+     int i;
+
+    ...
+
+    /*210*/ second(i);
+    /*211*/ ...
+}
+
+int second(int d)
+
+{
+
+  int x,y
+
+  ...
+
+}

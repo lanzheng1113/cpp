@@ -4,10 +4,10 @@
 #include <string>
 using namespace std;
 
-int fibi(int n);
-int fibr(int n);
+long long fibi(int n);
+long long fibr(int n);
 
-int g_callCnt = 0;
+long long g_callCnt = 0;
 
 int main(int argc,char** argv)
 {  
@@ -29,17 +29,17 @@ int main(int argc,char** argv)
 }
 
 //using iteration
-int fibi(int n)
+long long fibi(int n)
 {
    if(n < 2)
        return n;
     else
     {
-       int last =0;
-       int cur = 1;
+       long long last =0;
+       long long cur = 1;
        for(;n > 1;n--)        
        {
-           int tmp = cur;
+           long long tmp = cur;
            cur += last;
            last = tmp;
        }
@@ -48,7 +48,7 @@ int fibi(int n)
 }
 
 //using recursion
-int fibr(int n)
+long long fibr(int n)
 {  
    g_callCnt += 1;
    if(n < 2)

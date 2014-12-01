@@ -1,0 +1,7 @@
+permutaion(input,output)
+    如果只有一个字符，则将字符添加到output即可;
+    否则:
+        每次从input中取出一个不同的字符作为头部字符head
+                  然后拿出剩下的部分leftPart进行排列(返回的是一个子串的排列的集合)
+                  对剩余部分排列的每个结果的首部加上头部head,得到的结果添加到output
+        
