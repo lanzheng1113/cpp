@@ -1,0 +1,114 @@
+//VLR
+template<typename T>
+void BST<T>::iterativePreorder() {
+      if(root == 0)  return;
+      std::stack<BSTNode<T>*> stack;
+      stack.push(root);
+      while(!stack.empty()) {
+    	  BSTNode<T> * top = stack.top();
+    	  visit(top);
+    	  while(top->left != 0) {
+    		     top = top->left;
+    		     visit(top); // visit only when pushing in stack
+    		     stack.push(top);
+    	  }
+    	  if(top->right != 0) {
+    		  stack.push(top->right);
+    	  }else {
+    		    stack.pop();
+    		    while(!stack.empty()) {
+    		    	  if(top == stack.top()->left  &&  stack.top()->right != 0) {
+    		    		     stack.push(stack.top()->right);
+    		    		     break;
+    		    	   }else {
+    		    		     top = stack.top();
+    		    		     stack.pop();
+    		    	   }
+    		    }
+    	  }
+      }
+}
+//LVR
+template<typename T>
+void BST<T>::iterativeInorder() {
+	  if(root == 0) return;
+      std::stack<BSTNode<T>*> stack;
+      stack.push(root);
+      while(!stack.empty()) {
+    	   BSTNode<T> * top = stack.top();
+    	   //push left until left is null
+    	   while(top->left != 0) {
+    		        top = top->left;
+    		        stack.push(top);
+    	   }
+    	   visit(top);
+           stack.pop();
+           //pop until a node's right is not null or stack empty
+           while(!stack.empty() && top->right == 0) {
+        	       top = stack.top();
+        	       visit(top);
+        	       stack.pop();
+           }
+           //push the right child
+           if(top->right != 0) {
+        	   stack.push(top->right);
+           }
+      }
+}
+//LRV
+template<typename T>
+void BST<T>::iterativePostorder() {
+   if(root == 0) return;
+   std::stack<BSTNode<T>*> stack;
+   stack.push(root);
+   while(!stack.empty()) {
+	       BSTNode<T>* top = stack.top();
+	       //push left child until left is null
+	       while(top->left != 0) {
+	    	   top = top->left;
+	    	   stack.push(top);
+	       }
+	       //if right child exist,push right child
+	       if(top->right != 0) {
+	    	   stack.push(top->right);
+	       }else {
+	    	   visit(top);
+	    	   stack.pop();
+	    	   while(!stack.empty()) {
+	    		     // pop as right child or left child but parent's right is null
+	    		     if(top == stack.top()->right  || stack.top()->right == 0) {
+	    		    	  top = stack.top();
+	    		    	  visit(top);
+	    		    	  stack.pop();
+	    		     }else {
+	    		    	 stack.push(stack.top()->right);
+	    		    	 break;
+	    		     }
+	    	   }
+	       }
+    }
+}
+
+//another implementation
+//LRV
+template<typename T>
+void BST<T>::iterativePostorder() {
+   if(root == 0) return;
+   std::stack<BSTNode<T>*> stack;
+   BSTNode<T> *p = root,*q = root;
+   while(p != 0) {
+	   for(;p->left != 0;p = p->left)
+		   stack.push(p);
+	   while(p != 0 && (p->right ==0 || p->right == q)) {
+		    visit(p);
+		    q = p;
+		    if(stack.empty()) {
+		    	  return;
+		    }
+		    p = stack.top();
+		    stack.pop();
+	   }
+	   stack.push(p);
+	   p = p->right;
+   }
+}
