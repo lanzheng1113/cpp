@@ -81,7 +81,7 @@ public:
 	     void deleteByMerging(BSTNode<T> *&p);
 	     void findAndDeleteByMerging(const T& e);
 	     void deleteByCopying(BSTNode<T>*&p);
-	     void findAndDeleteByCopying(const T&e);
+	     bool findAndDeleteByCopying(const T&e);
 	     void balance(T*,int,int);
 protected:
 	     void clear(BSTNode<T>* p);

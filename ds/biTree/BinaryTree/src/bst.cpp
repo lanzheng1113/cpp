@@ -122,25 +122,25 @@ template<typename T>
 void BST<T>::insert(const T& e) {
          if (root == 0) {
         	 root = new BSTNode<T>(e);
-         }else {
-        	 BSTNode<T>* curNode = root;
-        	 BSTNode<T>* parent = 0;
-        	 while(curNode != 0) {
-        		    parent = curNode;
-        		    if (e == curNode->key)  {
-        		    	  return ; // no duplicate element
-        		    }else if (e < curNode->key) {
-        		    	curNode = curNode->left;
-        		    }else {
-        		    	curNode = curNode->right;
-        		    }
-        	 }
-        	 if(e < parent->key) {
-        		 parent->left = new BSTNode<T>(e); // insert as left child
-        	 }else {
-        		 parent->right = new BSTNode<T>(e);// insert as right child
-        	 }
+        	 return;
          }
+	 BSTNode<T>* curNode = root;
+	 BSTNode<T>* parent = 0;
+	 while(curNode != 0) {
+		    parent = curNode;
+			if (e == curNode->key)  {
+				  return ; // no duplicate element
+			}else if (e < curNode->key) {
+				curNode = curNode->left;
+			}else {
+				curNode = curNode->right;
+			}
+	 }
+	 if(e < parent->key) {
+		 parent->left = new BSTNode<T>(e); // insert as left child
+	 }else {
+		 parent->right = new BSTNode<T>(e);// insert as right child
+	 }
 }
 /**
  * Delete node p,using copying algorithm
@@ -148,13 +148,14 @@ void BST<T>::insert(const T& e) {
  */
 template<typename T>
 void BST<T>::deleteByCopying(BSTNode<T>*&p) {
-       BSTNode<T> *tmp = p;
+       BSTNode<T> *tmp = p,* leftMax,*previous ;
        if(p->left == 0) {
     	     p = p->right;
        }else if(p->right == 0) {
     	    p = p->left;
        }else { // has both child
-    	   BSTNode<T>* leftMax=p->left,*previous = p;
+    	   leftMax = p->left;
+    	   previous = p;
     	   while(leftMax->right != 0)
     	   {
     		     previous = leftMax;
@@ -175,32 +176,30 @@ void BST<T>::deleteByCopying(BSTNode<T>*&p) {
  * Delete node by value,using copying method
  */
 template<typename T>
-void BST<T>::findAndDeleteByCopying(const T&e){
-	 if(root == 0)  return;
-	      BSTNode<T>* p = root,*parent = root;
-	      if(root->key == e) {
-	    	  deleteByCopying(root); // delete root element
-	    	  return;
-	      }
-	      //find if exists
-	      while(p != 0) {
-	    	     if (e == p->key) {
-	    	    	 break;
-	    	     }else if(e < p->key) {
-	    	    	 parent = p;
-	    	    	  p = p->left;
-	    	     }else {
-	    	    	 parent = p;
-	    	    	 p = p->right;
-	    	     }
-	      }
-	      //if find ,delete it
-	      if(p != 0) {
-	    	  if(e == parent->left->key)
-	    		  deleteByCopying(parent->left); // delete left child
-	    	    else
-	    	       deleteByCopying(parent->right);// delete right child
-	      }
+bool BST<T>::findAndDeleteByCopying(const T&e){
+	BSTNode<T>* p = root,*parent = root;
+	//find if exists
+	while(p != 0) {
+			 if (e == p->key)
+				 break;
+			 parent = p;
+			if(e < p->key) {
+				  p = p->left;
+			 }else {
+				 p = p->right;
+			 }
+	  }
+	  //if find ,delete it
+	  if(p != 0 ) {
+		  if(p == root)
+			   deleteByCopying(root); // delete root element
+		  else if(p == parent->left)
+			  deleteByCopying(parent->left); // delete left child
+			else
+			   deleteByCopying(parent->right);// delete right child
+		  return true;
+	  }
+	  return false;
 }
 /**
  * remove the current node

@@ -26,7 +26,7 @@ void randomTest() {
 	     for(int x=0; x<100; x++) ivec.push_back(x);
 	     int testTimes = 5;
 		 for(int i = 0;i < testTimes ;i++) {
-			  random_shuffle(ivec.begin(), ivec.end());
+			  std::random_shuffle(ivec.begin(), ivec.end());
 			  AVLTree<int,int> avlTree;
 			  int count = rand() % 100;
 			  std::cout<<std::endl<<"Insert: ";

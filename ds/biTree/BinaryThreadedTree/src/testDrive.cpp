@@ -7,7 +7,6 @@
 #include "biThreadedTree.h"
 #include "biThreadedTree.cpp"
 
-
 int main() {
     int elements[] = {13,10,25,2,12,20,31,29};
     BiThreadedTree<int> btt;
