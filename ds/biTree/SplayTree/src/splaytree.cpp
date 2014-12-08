@@ -30,9 +30,16 @@ bool SplayTree<T,V>::insert(const T&k,const V&v) {
      return true;
 }
 template<typename T,typename V>
-void SplayTree<T,V>::inorderTraverse() {
+void SplayTree<T,V>::inorder() {
 	inoder(root);
+	std::cout<<std::endl;
 }
+template<typename T,typename V>
+void SplayTree<T,V>::preorder() {
+	preorder(root);
+	std::cout<<std::endl;
+}
+
 template<typename T,typename V>
 void SplayTree<T,V>::inoder(SplayTreeNode<T,V>* p) {
       if(p != 0) {
@@ -99,10 +106,13 @@ SplayTreeNode<T,V>* SplayTree<T,V>::zig1(SplayTreeNode<T,V>*p) {
 }
 /**
  * p节点父节点不是root,p--parent-grandParent进行调整
+ * topParent保存的是grandParent的父节点
+ * tmpRoot保存调整后新子树的根
  */
 template<typename T,typename V>
 SplayTreeNode<T,V>* SplayTree<T,V>::zig2(SplayTreeNode<T,V>* p){
-	 SplayTreeNode<T,V>* parent = p->parent,*grandParent = p->parent->parent,*tmpRoot;
+	 SplayTreeNode<T,V>* parent = p->parent,*grandParent = p->parent->parent;
+	 SplayTreeNode<T,V> *tmpRoot,*topParent=grandParent->parent;
 	if( p == parent->left &&  parent == grandParent->left)  { // LL型 zig-zig操作
 		   tmpRoot = rightRotate(grandParent);
 		   tmpRoot = rightRotate(tmpRoot);
@@ -116,13 +126,13 @@ SplayTreeNode<T,V>* SplayTree<T,V>::zig2(SplayTreeNode<T,V>* p){
     		grandParent->left = leftRotate(grandParent->left);
     		tmpRoot = rightRotate(grandParent);
     }
-	//这里还需要再次将grandParent节点与其父节点连接上
-	if(tmpRoot->parent == 0) {
-        root = tmpRoot;
-	}else if(grandParent == tmpRoot->parent->left) {
-		tmpRoot->parent->left = tmpRoot;
+	//这里还需要再次将tmpRoot节点与其父节点连接上
+	if(topParent == 0) {
+        root = tmpRoot;								// 新子树根成为根节点
+	}else if(grandParent == topParent->left) {
+		topParent->left = tmpRoot;				// 新子树成为上层父节点的左孩子
 	}else {
-		tmpRoot->parent->right = tmpRoot;
+		topParent->right = tmpRoot;			// 新子树成为上层父节点的右孩子
 	}
 	return tmpRoot;
 }
@@ -197,29 +207,33 @@ void SplayTree<T,V>::clear(SplayTreeNode<T,V>* p) {
         }
 }
 /**
- * 以q为中心向右旋转p,返回新的子树根节点q
+ * 以q为中心向左旋转p,返回新的子树根节点q
  * 注意维护parent指针
  */
 template<typename T,typename V>
 SplayTreeNode<T,V>* SplayTree<T,V>::leftRotate(SplayTreeNode<T,V>* p) {
 	SplayTreeNode<T,V>* q = p->right;
-	p->right = q->left;
-	q->left = p;
-	q->parent = p->parent;
-	p->parent = q;
+	p->right = q->left;				// q节点左孩子添加到p的右节点
+	if(p->right != 0)
+		p->right->parent = p;	// p新添加的右孩子指向其自身
+	q->left = p;						// p成为q的左孩子
+	q->parent = p->parent;		// q父节点指针指向原来p的父节点
+	p->parent = q;					// q成为p新的父节点
 	return q;
 }
 /**
- * 以q为中心向左旋转p
+ * 以q为中心向右旋转p
  * 注意维护parent指针
  */
 template<typename T,typename V>
 SplayTreeNode<T,V>* SplayTree<T,V>::rightRotate(SplayTreeNode<T,V>* p) {
 	SplayTreeNode<T,V>* q = p->left;
-	p->left = q->right;
-	q->right = p;
-	q->parent = p->parent;
-	p->parent = q;
+	p->left = q->right;					// q的右孩子成为p的左孩子
+	if(p->left != 0)
+		p->left->parent = p;			// p新的左孩子父节点指向其自身
+	q->right = p;							// p成为q的右孩子
+	q->parent = p->parent;			// q的父节点指针指向原来p的父节点
+	p->parent = q;						// q成为p的新父节点
 	return q;
 }
 

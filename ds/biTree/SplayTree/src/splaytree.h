@@ -37,10 +37,8 @@ public:
 			root = 0;
 		}
 	   bool insert(const T&k,const V&v);
-	   void preorder() {
-	   	    preorder(root);
-	   }
-	   void inorderTraverse();
+	   void preorder();
+	   void inorder();
 	   bool search(const T& k,V& v);
 	   bool FindAndDelete(const T&k);
 	   bool isEmpty() const{

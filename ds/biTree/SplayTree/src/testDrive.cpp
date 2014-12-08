@@ -14,13 +14,14 @@
 
 using namespace std;
 
-void randomInsertTest();
+void randomInsertTest(int testTimes,int elemCount);
 void simpleTest() ;
+void randomSearchTest(int testTimes,int elemCount,int searchTime);
 
-int main()
+int main(int arc,char** argv)
 {
-	simpleTest();
-
+	randomSearchTest(5,100,10); // 随机插入和查找测试
+	//randomInsertTest(1,100);	//随机插入删除测试
 	return 0;
 }
 void simpleTest() {
@@ -29,42 +30,69 @@ void simpleTest() {
 		 for (int * begin = elements;begin != elements+6 ;++begin) {
 			 tree.insert(*begin,*begin);
 		 }
-		 tree.inorderTraverse();
-		 std::cout<<"\n\n";
-		 std::cout<<"\n\n";
+		 std::cout<<"inorder: \t"<<std::endl;
+		 tree.inorder();
+		 std::cout<<"preorder: \t"<<std::endl;
 		 tree.preorder();
 		 int v = 0;
 		 tree.search(88,v);
-		 std::cout<<"\n\n";
-		 tree.inorderTraverse();
-		 std::cout<<"\n\n";
+		 std::cout<<"inorder: \t"<<std::endl;
+		 tree.inorder();
+		 std::cout<<"preorder: \t"<<std::endl;
 		 tree.preorder();
 }
-void randomInsertTest() {
+void randomSearchTest(int testTimes,int elemCount,int searchTime) {
+	 std::vector<int> ivec;
+	 srand(unsigned(time(NULL)));
+	 for(int x=0; x<elemCount; x++) ivec.push_back(x);
+     if(searchTime > elemCount)
+    	   searchTime = elemCount;
+	 for(int i = 0;i < testTimes ;i++) {
+		  std::random_shuffle(ivec.begin(), ivec.end());
+		  SplayTree<int,int> tree;
+		  std::cout<<"insert: \t";
+		  for(std::vector<int>::iterator it = ivec.begin(); it != ivec.end();++it) {
+			  std::cout<<*it<<"\t";
+			  tree.insert(*it,*it);
+		   }
+		   std::cout<<std::endl<<"inorder: \t";
+		   tree.inorder();
+		   std::random_shuffle(ivec.begin(), ivec.end());
+		   //随机查找元素
+		   for(std::vector<int>::iterator it = ivec.begin(),end= ivec.begin()+searchTime; it != end;++it){
+			    int v;
+				tree.search(*it,v);
+				std::cout<<std::endl<<"searched:\t "<<*it<<std::endl<<"inorder: "<<std::endl;
+				tree.inorder();
+				std::cout<<"preorder:"<<std::endl;
+				tree.preorder();
+		   }
+		  std::cout<<"Test case: "<<i<<" ok"<<std::endl;
+	}
+}
+void randomInsertTest(int testTimes,int elemCount) {
 	     std::vector<int> ivec;
 	     srand(unsigned(time(NULL)));
-	     for(int x=0; x<100; x++) ivec.push_back(x);
-	     int testTimes = 1;
+	     for(int x=0; x<elemCount; x++) ivec.push_back(x);
+
 		 for(int i = 0;i < testTimes ;i++) {
 			  std::random_shuffle(ivec.begin(), ivec.end());
 			  SplayTree<int,int> tree;
-			  int count = rand() % 100+1;
-			  std::cout<<std::endl<<"Insert: ";
-			   for(int j= 0 ;j < count ;j++) {
-				    std::cout<<ivec[j]<<"  ";
-				    tree.insert(ivec[j],ivec[j]);
-			 	}
-			   std::cout<<std::endl<<"elements: ";
-			   tree.inorderTraverse();
-			     //随机删除元素直到为空
-			 	while(!tree.isEmpty()) {
-			 		int r = rand() % count;
-			 		bool ret = tree.FindAndDelete(ivec[r]);
-			 		if(!ret) continue;
-			 		std::cout<<std::endl<<"Delete: "<<ivec[r]<<std::endl;
-			 		tree.inorderTraverse();
-			 	}
-			 	std::cout<<std::endl<<"Test case: "<<i<<" ok"<<std::endl;
+			  std::cout<<"insert: \t";
+			  for(std::vector<int>::iterator it = ivec.begin(); it != ivec.end();++it) {
+				  std::cout<<*it<<"\t";
+				  tree.insert(*it,*it);
+			   }
+			   std::cout<<std::endl<<"inorder: \t";
+			   tree.inorder();
+			   std::random_shuffle(ivec.begin(), ivec.end());
+			   //随机删除元素
+			   for(std::vector<int>::iterator it = ivec.begin(); it != ivec.end();++it){
+				    tree.FindAndDelete(*it);
+				    std::cout<<std::endl<<"delete: \t"<<*it<<std::endl<<"inorder: "<<std::endl;
+				   	tree.inorder();
+			   }
+			  std::cout<<"Test case: "<<i<<" ok"<<std::endl;
 		}
 }
 
