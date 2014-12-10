@@ -1,0 +1,29 @@
+1.插入节点算法伪代码
+
+insert(K)
+    找到插入节点node
+    while(true)
+	    if node.keyCnt < M-1 :   //节点未满
+	       直接插入
+	       返回
+	    else		//节点满
+		将k,算在内取插入节点新的中间值K
+		将节点node以mid划分的一半元素存在节点node1,另一半存在node2
+		if node 是根节点
+			新生成一个节点，重新定位root,
+		        将node1挂在root 0位置，node2挂在root上1位置
+		        返回
+		else:
+		    计算k在上层中父节点parent的位置i,将node1挂在上层i位置，node2挂在上层i+1位置(假插入,需要移动指针)
+		    node = parent在parent层插入K
+
+2.查找算法伪代码
+BTreeNode<T,M>* search(BTreeNode<T,M>*p,const T& e)
+	如果p为空
+                则返回0
+        否则:
+         遍历当前节点p的键索引i，找到第一个 >= e 的键或者到超出已有键的数目
+         如果i超出已有键的数目或者找到第一个大于e的键
+	       则下次在p->ptr[i]中开始查找  search(p->ptr[i],e)
+         否则（即p中找到一个键与e相等）
+             返回p
