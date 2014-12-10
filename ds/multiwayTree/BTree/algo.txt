@@ -1,21 +1,19 @@
 1.插入节点算法伪代码
 
 insert(K)
-    找到插入节点node
-    while(true)
-	    if node.keyCnt < M-1 :   //节点未满
-	       直接插入
-	       返回
-	    else		//节点满
-		将k,算在内取插入节点新的中间值K
-		将节点node以mid划分的一半元素存在节点node1,另一半存在node2
-		if node 是根节点
-			新生成一个节点，重新定位root,
-		        将node1挂在root 0位置，node2挂在root上1位置
-		        返回
-		else:
-		    计算k在上层中父节点parent的位置i,将node1挂在上层i位置，node2挂在上层i+1位置(假插入,需要移动指针)
-		    node = parent在parent层插入K
+    找到插入节点p
+    如果已经存在键K则返回
+    p节点插入键K
+    while(p键数目大于最大值)
+            取p节点中间值K
+            将p节点以K分成node1,node2(注意指针的重新设置)
+            if p是根节点
+               生成一个新的根节点root
+               将node1,node2挂在root上，设置指针
+               返回
+           else
+                将K值插入父节点parent,并将node1,node2挂在插入的位置i两侧
+                p = parent从父节点开始继续判断
 
 2.查找算法伪代码
 BTreeNode<T,M>* search(BTreeNode<T,M>*p,const T& e)
@@ -27,3 +25,28 @@ BTreeNode<T,M>* search(BTreeNode<T,M>*p,const T& e)
 	       则下次在p->ptr[i]中开始查找  search(p->ptr[i],e)
          否则（即p中找到一个键与e相等）
              返回p
+             
+3.删除算法伪代码
+
+void remove(const T&e) 
+	   找到删除键所在节点p
+	   如果不存在键e则直接返回
+	   如果p不是叶子节点
+	         选取前驱节点pre
+	         将pre节点键k复制给p
+	         删除pre节点中的键k(转换为从叶子删除)
+	    否则:
+	          删除节点p中键e,并调整p中键值
+	    while(p节点下溢)
+	             if p左边或右边存在同级sib节点键个数大于最小要求值(同级节点有足够多键)
+	                p,parent中划分p和sib的中间键k,以及sib重新划分，将新的k移动到父节点
+	                返回
+	              else p的父节点是根root
+	                     if root只有一个键
+	                         将p,以及sib和root键融合一个赋给p,删除sib,将p重新指定为root
+	                     else
+	                          将p,以及sib和root中划分p和sib的键 融合一个赋给p,删除sib,重新调整root中键
+	                      返回
+	              else 
+	                     将p,以及sib和parent中划分p和sib的键 融合一个赋给p,删除sib,重新调整parent中键
+	                     p = parent 继续判断
