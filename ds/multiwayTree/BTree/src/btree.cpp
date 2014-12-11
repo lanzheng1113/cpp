@@ -113,7 +113,7 @@ void BTree<T,M>::splitNode(BTreeNode<T,M>*p,BTreeNode<T,M>*&node1,BTreeNode<T,M>
 }
 template<typename T,int M>
 void BTree<T,M>::remove(const T&e) {
-	  BTreeNode<T,M> p = search(root,e);
+	  BTreeNode<T,M>* p = search(root,e);
 	  if(p == 0)
 		  return;	// 不存在键e则直接返回
 	  remove(p,e);
@@ -126,7 +126,7 @@ void BTree<T,M>::remove(BTreeNode<T,M>*p,const T&e) {
 	    if(p == 0)
 	    	 return;
 	    int index =0;
-	     for(;index < p->keynum && p->keys[index] < e;index++); // 键e在p中的索引
+	    for(;index < p->keynum && p->keys[index] < e;index++); // 键e在p中的索引
         if(p->ptr[0] != 0) {   // 非叶子节点删除
         	  //找出最大前驱
         	  BTreeNode<T,M>* q = p->ptr[index];
@@ -136,23 +136,28 @@ void BTree<T,M>::remove(BTreeNode<T,M>*p,const T&e) {
               p->keys[index] = preMax;
               remove(q,preMax);	// 转换为从叶子节点删除preMax键
         }else {
+        	//先移除键e
         	for(int i= index+1;i < p->keynum;i++)
         		  p->keys[i-1] = p->keys[i];
             p->keynum--;
-            while(p->keynum < MIN_KEY_NUM) {  // 删除后键数目下溢
-            	    BTreeNode<T,M>* sib,parent = p->parent;
-            		bool ret = getProperSibling(p,sib);
+            while(p->parent != 0 && p->keynum < MIN_KEY_NUM) {  // 删除后键数目下溢
+            	    BTreeNode<T,M>* left,*right,*parent = p->parent;
+            		bool ret = getProperSibling(p,left,right);
             		if(ret) {		// 如果存在同级节点有足够多键
-            			joinAndSplitNode(parent,p,sib);
-            		}else if (parent == 0){		// 父节点是根节点
+            			joinAndSplitNode(parent,left,right);
+            			return;
+            		}else if (parent->parent == 0){		// 父节点是根节点
                             if(parent->keynum == 1) {
-                            	root = joinAndRemoveNode(parent,p,sib);
-                            }else {
-                            	joinAndRemoveNode(parent,p,sib);
+                            	joinAndRemoveNode(parent,left,right);
+                            	root = left;
+                            	root->parent = 0;
+                            }
+                            else {
+                            	joinAndRemoveNode(parent,left,right);
                             }
                             return;
             		}else {
-            			joinAndRemoveNode(parent,p,sib);
+            			joinAndRemoveNode(parent,left,right);
             			p = parent; // 继续进行判断
             		}
             }
@@ -162,53 +167,90 @@ void BTree<T,M>::remove(BTreeNode<T,M>*p,const T&e) {
  * 合并parent中中间值k，以及node1和node2然后再重新划分node1,k,node2
  */
 template<typename T,int M>
-void BTree<T,M>::joinAndSplitNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*node1,BTreeNode<T,M>*node2) {
-	BTreeNode<T,M>* left,*right;
-	if(node1->keys[node1->keynum-1] < node2->keys[0])  {
-		  left = node1;
-		  right = node2;
-	}else {
-		 left = node2;
-		 right = node1;
-	}
-	int i;
-    for(i=0;i < parent->keynum && parent->keys[i] < left->keys[left->keynum-1] ;++i);
-    left->keynum++;
-    left->keys[left->keynum-1] =  parent->keys[i]; // 将划分left,right的中间值放到left中
-    parent->keys[i] = right->keys[0]; // 将right中第一个值复制到父节点中
-    for(int j=1;j < right->keynum;j++) {
-    	 right->keys[i-1] = right->keys[i]; // 移动right中元素，重新排列
+void BTree<T,M>::joinAndSplitNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*left,BTreeNode<T,M>*right) {
+	int index=0;
+    for(;index < parent->keynum && parent->keys[index] < left->keys[left->keynum-1] ;++index); // 找出parent中划分left,right的中间值
+    if(left->keynum < right->keynum) {											// right向left输送
+    	    left->keys[left->keynum] =  parent->keys[index]; 				// 将划分left,right的中间值放到left中
+    	    left->keynum++;
+    	    parent->keys[index] = right->keys[0]; 						// 将right中第一个值复制到父节点中
+    	    left->ptr[left->keynum] = right->ptr[0];
+    	    if(right->ptr[0] != 0) right->ptr[0]->parent = left;
+    	    for(int j=1;j < right->keynum;j++) {							// 移动right中元素，重新排列
+    	    	 right->keys[j-1] = right->keys[j];
+    	    	 right->ptr[j-1] = right->ptr[j];
+    	    }
+    	    right->ptr[right->keynum-1] = right->ptr[right->keynum];
+    	    right->keynum--;
+    }else {			// left向right输送
+           for(int j=0;j< right->keynum;++j) {
+        	     right->keys[j+1] = right->keys[j];
+        	     right->ptr[j+2] = right->ptr[j+1];
+           }
+           right->ptr[1] = right->ptr[0];
+           right->keys[0] = parent->keys[index];
+           right->ptr[0] = left->ptr[left->keynum];
+           if(right->ptr[0] != 0) right->ptr[0]->parent = right;
+           right->keynum++;
+           T tmp = left->keys[left->keynum-1];
+           parent->keys[index] = tmp;
+           left->keynum--;
     }
 }
 /**
  * 合并parent中中间值k,以及node1和node2，然后合并成node1,删除node2
  */
 template<typename T,int M>
-void BTree<T,M>::joinAndRemoveNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*node1,BTreeNode<T,M>*node2) {
-
+void BTree<T,M>::joinAndRemoveNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*left,BTreeNode<T,M>*right) {
+		int index=0;
+		for(;index < parent->keynum && parent->keys[index] < left->keys[left->keynum-1] ;++index); // 找出parent中划分left,right的中间值
+		 left->keys[left->keynum] =  parent->keys[index]; // 将划分left,right的中间值放到left中
+		 left->keynum++;
+		for(int j=0;j < right->keynum;j++) {
+			left->keys[left->keynum] = right->keys[j]; // 移动right中元素到left节点
+			left->ptr[left->keynum] = right->ptr[j];	// 注意指针也要移动过来
+			if(right->ptr[j] != 0)  right->ptr[j]->parent = left;
+			left->keynum++;
+	   }
+	   left->ptr[left->keynum] = right->ptr[right->keynum];
+	   if(right->ptr[right->keynum] != 0)  right->ptr[right->keynum]->parent = left;
+	   //释放right节点
+	   parent->ptr[index+1] = 0;
+	   delete right;
+       //调整parent节点的键和指针分布
+	  for(int j=index+1;j < parent->keynum;++j) {
+		      parent->keys[j-1] = parent->keys[j];
+		      parent->ptr[j] = parent->ptr[j+1];
+	  }
+	  parent->keynum--;
 }
 /**
- * 获取p节点同级节点sib
+ * 获取p节点在内的两个同级节点
+ * 同级节点以left,right形式返回
  * 如果键数目大于MIN_KEY_NUM的同级节点则返回true
  * 否则返回false
  */
 template<typename T,int M>
-bool void BTree<T,M>::getProperSibling(BTreeNode<T,M>*p,BTreeNode<T,M>*&sib) {
+bool BTree<T,M>::getProperSibling(BTreeNode<T,M>*p,BTreeNode<T,M>*&left,BTreeNode<T,M>*&right) {
 	BTreeNode<T,M>* parent = p->parent;
-	int i;
+	int i=0;
+	left = p; //默认p节点为左边同级节点
 	for(;i < parent->keynum+1 && parent->ptr[i] != p ;i++);  // 获取p在父节点中索引
-	if( i == parent->keynum) {							// 最后一个孩子
-		sib = parent->ptr[parent->keynum-1];
-	}else if(i == 0) {											// 第一个孩子
-		 sib = parent->ptr[1]->keynum;
-	}else {															// 中间孩子，可以选择左边或右边同级节点
-		sib = parent->ptr[i+1];
+	if( i == parent->keynum) {				// 最后一个孩子
+		left = parent->ptr[parent->keynum-1];
+		right = p;
+	}else if(i == 0) {					// 第一个孩子
+		 right = parent->ptr[1];
+	}else {							// 中间孩子，可以选择左边或右边同级节点
+		right = parent->ptr[i+1];
 		if(parent->ptr[i+1]->keynum > MIN_KEY_NUM)
-			sib = parent->ptr[i+1];
-		else if(parent->ptr[i-1] ->keynum > MIN_KEY_NUM)
-			sib = parent->ptr[i-1];
+			right = parent->ptr[i+1];
+		else if(parent->ptr[i-1] ->keynum > MIN_KEY_NUM) {
+			left = parent->ptr[i-1];
+			right = p;
+		}
 	}
-    return sib->keynum > MIN_KEY_NUM;
+    return left->keynum > MIN_KEY_NUM || right->keynum >MIN_KEY_NUM ;
 }
 template<typename T,int M>
 void BTree<T,M>::orderedTraverse() {
@@ -238,13 +280,13 @@ void BTree<T,M>::clear(BTreeNode<T,M>* p) {
 		   for(int i= 0;i < p->keynum;++i)
 			   clear(p->ptr[i]);						// 清除子节点
 		   if(p->keynum > 0)
-			   clear(p->ptr[p->keynum+1]); // 清除比p最后一个节点还大的子节点
+			   clear(p->ptr[p->keynum]); // 清除最后一个指针
 		   delete p;	// 清除自身空间
 	}
 }
 
 template<typename T,int M>
-void BTree<T,M>::traverse(BTreeNode<T,M>* p) {
+void  BTree<T,M>::traverse(BTreeNode<T,M>* p) {
 	if(p != 0) {
 		  for(int i=0;i < p->keynum;++i) {
 			  traverse(p->ptr[i]);					// 先访问比键小的节点

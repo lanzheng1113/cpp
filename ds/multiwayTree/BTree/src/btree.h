@@ -38,7 +38,7 @@ public:
 template<typename T,int M=5>
 class BTree {
 public:
-	BTree():MIN_KEY_NUM((M-1)/2+1),MAX_KEY_NUM(M-1) {
+	BTree():MIN_KEY_NUM( (M+1)/2-1 ),MAX_KEY_NUM(M-1) {
 		root = 0;
 	}
 	~BTree();
@@ -53,10 +53,10 @@ private:
 	void remove(BTreeNode<T,M>*p,const T&e);
 	bool getInsertPos(const T&e,BTreeNode<T,M>*&p,int &index);
 	BTreeNode<T,M>* search(BTreeNode<T,M>*p,const T&e);
-	bool void getProperSibling(BTreeNode<T,M>*p,BTreeNode<T,M>*&sib);
+	bool getProperSibling(BTreeNode<T,M>*p,BTreeNode<T,M>*&left,BTreeNode<T,M>*&right);
 	void splitNode(BTreeNode<T,M>*p,BTreeNode<T,M>*&node1,BTreeNode<T,M>*&node2);
-	void joinAndSplitNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*node1,BTreeNode<T,M>*node2);
-	void joinAndRemoveNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*node1,BTreeNode<T,M>*node2);
+	void joinAndSplitNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*left,BTreeNode<T,M>*right);
+	void joinAndRemoveNode(BTreeNode<T,M>*parent,BTreeNode<T,M>*left,BTreeNode<T,M>*right);
 private:
 	BTreeNode<T,M> *root;
 	const int MIN_KEY_NUM,MAX_KEY_NUM;
