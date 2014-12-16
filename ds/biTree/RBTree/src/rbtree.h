@@ -1,6 +1,6 @@
 /*
  * rbtree.h
- *
+ *  参考自: http://zh.wikipedia.org/wiki/红黑树
  *  Created on: 2014年12月13日
  *      Author: wangdq
  */
@@ -8,7 +8,7 @@
 #ifndef RED_BLACK_TREE_H_
 #define RED_BLACK_TREE_H_
 
-enum RBTreeColor{Red,Black};
+enum RBTreeColor{RED,BLACK};
 
 template<typename K>
 class RBTreeNode {
@@ -19,6 +19,12 @@ public:
 		parent = p;
 		left = l;
 		right = r;
+	}
+	RBTreeNode(RBTreeColor c) {
+		color = c;
+		parent = 0;
+		left =0;
+		right = 0;
 	}
 public:
 	RBTreeColor color;
@@ -31,18 +37,22 @@ class RBTree {
 public:
 	RBTree() {
 		root = 0;
+		NIL = new RBTreeNode<K>(BLACK);
 	}
 	~RBTree() {
-		destroy(root);
+		if(root != 0)
+			destroy(root);
+		delete NIL;
 	}
 	void insert(const K& k);
 	void remove(const K&k);
 	RBTreeNode<K> *search(const K&k);
 	void inorder() ;
 private:
-	RBTreeNode<K> * leftRotate(RBTreeNode<K> *p);
-	RBTreeNode<K> * rightRotate(RBTreeNode<K> *p);
+	void leftRotate(RBTreeNode<K> *p);
+	void rightRotate(RBTreeNode<K> *p);
 	void insertFixup(RBTreeNode<K> *p);
+	void removeOneChild(RBTreeNode<K> *p);
 	void removeFixup(RBTreeNode<K> *p);
 	void inorder(RBTreeNode<K> *p);
 	void destroy(RBTreeNode<K> *p);
@@ -54,8 +64,14 @@ private:
 		else
 			return grandParent->left;
 	}
+	inline RBTreeNode<K>* getSibling(RBTreeNode<K>*p) {
+		    if(p == p->parent->left)
+		    	 return p->parent->right;
+		    else
+		    	return p->parent->left;
+	}
 public:
-	RBTreeNode<K> *root;
+	RBTreeNode<K> *root,*NIL;	// NIL为所有节点共享的
 };
 
 #endif /* RED_BLACK_TREE_H_*/
