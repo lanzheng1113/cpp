@@ -9,6 +9,7 @@
 #define TRIE_H_
 
 #include <string>
+#include <vector>
 
 template<typename V>
 class TrieNode {
@@ -42,10 +43,12 @@ public:
 	bool search(const std::string &key,V&v);
 	void remove(const std::string &key);
 	void traverse();
+	void findSimilar(const std::string key,std::vector<std::string> &strVec);
 private:
 	 TrieNode<V> *search(const std::string &key);
 	 void destory(TrieNode<V> *p);
 	 void traverse(TrieNode<V> *p);
+	 void getString(TrieNode<V> *p,std::vector<std::string> &strvec);
 private:
 	TrieNode<V> *root;
 };
