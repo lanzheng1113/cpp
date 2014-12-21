@@ -4,14 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/adjlist.cpp \
+../src/adjmatrix.cpp \
 ../src/graph.cpp \
 ../src/spath.cpp 
 
 OBJS += \
+./src/adjlist.o \
+./src/adjmatrix.o \
 ./src/graph.o \
 ./src/spath.o 
 
 CPP_DEPS += \
+./src/adjlist.d \
+./src/adjmatrix.d \
 ./src/graph.d \
 ./src/spath.d 
 

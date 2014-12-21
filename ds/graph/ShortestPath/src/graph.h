@@ -10,24 +10,14 @@
 
 #include <istream>
 #include <string>
+#include "adjmatrix.h"
 
-//邻接矩阵
-class GraphMatrix {
-public:
-	GraphMatrix(int verNum,std::istream &stream);
-	~GraphMatrix();
-	int ** getMatrix();
-	void print();
-public:
-	static const int INF;
-private:
-	int vertexNum;
-	int **matrix;
-};
 //图
 class Graph {
 public:
-	Graph(int verNum,std::istream &stream):vertexNum(verNum),gMatrix(verNum,stream) {
+	Graph(std::istream &stream):adjMatrix(stream) {
+		vertNum = adjMatrix.getVertexNum();
+		vertNames = adjMatrix.getVertexName();
 		pathMatrix = 0;
 		disMatrix = 0;
 	}
@@ -41,10 +31,11 @@ private:
 	void shortestPathFLOYD(int** gMatrix,std::string **pathMatrix,int **disMatrix);
 	void shortestPathDIJ(int start,int** gMatrix,std::string *path,int *distance) ;
 private:
-	int vertexNum;
+	int vertNum;
 	std::string **pathMatrix;
 	int **disMatrix;
-	GraphMatrix gMatrix;		// 使用邻接矩阵存储
+	std::vector<std::string> vertNames;
+	AdjMatrix adjMatrix;		// 使用邻接矩阵存储
 };
 
 

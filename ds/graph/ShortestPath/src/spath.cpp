@@ -8,24 +8,34 @@
 #include <fstream>
 #include <string>
 #include "graph.h"
+#include "adjlist.h"
 
 using namespace std;
+void testCase0(std::istream &istream);
+void testCase1(std::istream &istream);
 int main() {
 	string fileName;
-	cout<<"input vertex matrix filename"<<endl;
+	cout<<"input filename:"<<endl;
 	cin>>fileName;
 	ifstream fileis(fileName.c_str());
 	if(!fileis) {
 		cerr<<"could not open stream: "<<fileName<<" for reading."<<endl;
 		return 1;
 	}
-	int n;
-	fileis >> n;
-	Graph graph(n,fileis);//创建图
-	//graph.printSPathDIJ();
-    //std::cout<<std::endl;
-    graph.printSPathFLOYD();
+	testCase1(fileis);
+	return 0;
 }
-
-
+void testCase0(std::istream &istream) {
+	Graph graph(istream);//创建图
+	graph.printSPathFLOYD();
+}
+void testCase1(std::istream &istream) {
+	AdjList gList(istream);
+	std::cout<<"Adjacent List:"<<std::endl;
+    gList.print();
+    AdjList list;
+    gList.getInvAdjList(list);
+    std::cout<<"Inverse Adjacent List:"<<std::endl;
+    list.print();
+}
 
