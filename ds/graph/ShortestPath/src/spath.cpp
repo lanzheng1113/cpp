@@ -5,17 +5,26 @@
  *      Author: wangdq
  */
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "graph.h"
 
 using namespace std;
 int main() {
+	string fileName;
+	cout<<"input vertex matrix filename"<<endl;
+	cin>>fileName;
+	ifstream fileis(fileName.c_str());
+	if(!fileis) {
+		cerr<<"could not open stream: "<<fileName<<" for reading."<<endl;
+		return 1;
+	}
 	int n;
-	cout<<"input vertex num"<<endl;
-	cin>>n;
-	//创建图
-	std::cout<<"input graph data,use 'inf' to represent infinite"<<std::endl;
-	Graph graph(n,std::cin);
-    graph.printShortestPath(1);
+	fileis >> n;
+	Graph graph(n,fileis);//创建图
+	//graph.printSPathDIJ();
+    //std::cout<<std::endl;
+    graph.printSPathFLOYD();
 }
 
 
