@@ -18,6 +18,7 @@ void testCase0(std::istream &istream);
 void testCase1(std::istream &istream);
 void testCase2(std::istream &istream);
 void testCase3(std::istream &istream);
+void testCase4(std::istream &istream);
 
 int main() {
 	string fileName;
@@ -28,9 +29,10 @@ int main() {
 		cerr<<"could not open stream: "<<fileName<<" for reading."<<endl;
 		return 1;
 	}
-	testCase3(fileis);
+	testCase0(fileis);
 	return 0;
 }
+//测试最短路径
 void testCase0(std::istream &istream) {
 	Graph graph(istream);//创建图
 	graph.printSPathFLOYD();
@@ -56,6 +58,7 @@ void testCase2(std::istream &istream)  {
      std::cout<<"arc tail as: "<<orthList.getVertNames()[vertNo]<<std::endl;
      orthList.printVertOut(vertNo);
 }
+//测试邻接多重表
 void testCase3(std::istream &istream) {
 	 AdjMulist list(istream);
 	 std::cout<<"Adjacency Multilist:"<<std::endl;
@@ -64,5 +67,14 @@ void testCase3(std::istream &istream) {
 	 std::cout<<"edge has vert: "<<list.getVertNames()[vertNo]<<std::endl;
 	 list.printEdge(vertNo);
 }
-
+//测试图的遍历
+void testCase4(std::istream &istream) {
+	Graph graph(istream);//创建图
+	std::cout<<"graph as: "<<std::endl;
+	graph.printGraph();
+	std::cout<<"Depth First Search: \t";
+	graph.DFSTraverse();
+	std::cout<<"Breadth First Search: \t";
+	graph.BFSTraverse();
+}
 

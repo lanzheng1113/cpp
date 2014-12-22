@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <queue>
 
 void Graph::prepareMatrix() {
     if(disMatrix == 0) {
@@ -48,12 +49,8 @@ void Graph::printSPathDIJ(int start) {
 	prepareMatrix();
     shortestPathDIJ(start,adjMatrix.getMatrix(),pathMatrix[start],disMatrix[start]);
     std::cout<<"shortest distance"<<start<<"to others"<<std::endl;
-    for(int i=0;i < vertNum;++i) {
-        	  if(disMatrix[start][i] != AdjMatrix::INF )
-        		  std::cout<<disMatrix[start][i]<<"\t";
-        	  else
-        		  std::cout<<"inf"<<"\t";
-     }
+    for(int i=0;i < vertNum;++i)
+    	  printDistance(disMatrix,start,i);
     std::cout<<std::endl<<"shortest path: "<<std::endl;
     for(int i=0;i < vertNum;++i) {
     	 std::cout.width(2*vertNum);
@@ -64,12 +61,8 @@ void Graph::printSPathDIJ(int start) {
 void Graph::printPath() {
 	std::cout<<"shortest distance:"<<std::endl;
 	for(int i=0;i < vertNum;++i) {
-		for(int j = 0;j < vertNum;++j) {
-			if(disMatrix[i][j] != AdjMatrix::INF )
-				std::cout<<disMatrix[i][j]<<"\t";
-			else
-				std::cout<<"inf"<<"\t";
-		}
+		for(int j = 0;j < vertNum;++j)
+			printDistance(disMatrix,i,j);
 		std::cout<<std::endl;
 	}
 	std::cout<<"shortest paths:"<<std::endl;
@@ -90,6 +83,22 @@ void Graph::printSPathFLOYD() {
 	printPath();
 }
 /**
+ * 打印图的邻接矩阵
+ */
+void  Graph::printGraph() {
+	adjMatrix.print();
+}
+/**
+ * 打印距离矩阵中i,j距离
+ */
+void Graph::printDistance(int **disMatrix,int i,int j) {
+	 if( (gkind ==DN || gkind == UDN) &&
+			 disMatrix[i][j]== adjMatrix.getUnavailable() )
+		  std::cout<<"inf"<<"\t";
+	else
+		 std::cout<<disMatrix[i][j]<<"\t";
+}
+/**
  * Floyd算法  求每一对定点间最短路径
  * 输入gMatrix表示图的邻接矩阵
  *
@@ -102,15 +111,15 @@ void Graph::shortestPathFLOYD(int** gMatrix,std::string **pathMatrix,int **disMa
 		for(int j=0;j < vertNum;++j) {
 			    disMatrix[i][j] = gMatrix[i][j];
 			    pathMatrix[i][j] = "";
-			    if(disMatrix[i][j] != AdjMatrix::INF)
+			    if(disMatrix[i][j] != adjMatrix.getUnavailable())
 			    	  pathMatrix[i][j] = vertNames[i]+"-"+vertNames[j];	// 初始路径 i-j
 		}
    //迭代计算最短路径
 	for(int k=0;k < vertNum;++k)  {
 		for(int i=0;i < vertNum;++i)
 						for(int j=0;j < vertNum;++j) {
-							if(disMatrix[i][k] == AdjMatrix::INF
-									|| disMatrix[k][j]  == AdjMatrix::INF)
+							if(disMatrix[i][k] == adjMatrix.getUnavailable()
+									|| disMatrix[k][j]  == adjMatrix.getUnavailable())
 								continue;
 							if(disMatrix[i][k]+disMatrix[k][j] < disMatrix[i][j]) {	// K为中间顶点
 								disMatrix[i][j] = disMatrix[i][k]+disMatrix[k][j]; // 更新路径距离
@@ -149,14 +158,14 @@ void Graph::shortestPathDIJ(int start,int** gMatrix,std::string *path,int *dista
 		      distance[i] = gMatrix[start][i];
 		      path[i] = "";	// 标记为无路径
 		      //如果从start可到达i则标记路径
-		      if(distance[i] < AdjMatrix::INF)
+		      if(distance[i] < adjMatrix.getUnavailable())
 		    	   path[i] = vertNames[start]+"-"+vertNames[i];
 	   }
 	   distance[start] = 0;
 	   final[start] = true;
 	   //n-1次迭代求出依次求出最短路径
       for(int i=0;i<vertNum;++i) {
-    	    int minDis=AdjMatrix::INF,min=-1;
+    	    int minDis=adjMatrix.getUnavailable(),min=-1;
     	    //选取距离最小者
            for(int j=0;j < vertNum;++j) {
         	    if(final[j]) continue;
@@ -170,7 +179,7 @@ void Graph::shortestPathDIJ(int start,int** gMatrix,std::string *path,int *dista
             final[min] = true;
            //更新剩余的顶点的最短距离
            for(int i=0;i < vertNum;++i) {
-        	   if(final[i]  ||  gMatrix[min][i] == AdjMatrix::INF ) continue;
+        	   if(final[i]  ||  gMatrix[min][i] == adjMatrix.getUnavailable() ) continue;
         	   if(minDis+gMatrix[min][i] < distance[i])  {
         		     distance[i] = minDis+gMatrix[min][i]; // 更新最短路径距离
         		     // 标记路径为从start-min-i
@@ -179,4 +188,68 @@ void Graph::shortestPathDIJ(int start,int** gMatrix,std::string *path,int *dista
            }
       }
 }
-
+/**
+ * 深度优先遍历
+ * 递归实现
+ */
+void Graph::DFSTraverse() {
+	bool  visited[vertNum];
+	for(int i=0;i < vertNum;++i)
+		visited[i] = false;
+    for(int i=0;i < vertNum;++i) {
+    	  if(!visited[i])
+    		  DFS(i,adjMatrix.getMatrix(),visited); // 对每个没有访问的结点进行深度优先遍历
+    }
+    std::cout<<std::endl;
+}
+/**
+ * 深度优先遍历顶点vertNo
+ */
+void Graph::DFS(int vertNo,int** gMatrix,bool* visited) {
+	visit(vertNo); // 访问自身
+	visited[vertNo] = true; // 标记为已经访问
+	int next = 0,adjVertNo = -1;
+	//对自己的临近结点 继续深度优先遍历
+	while( next < vertNum && (adjVertNo = adjMatrix.findAdjVertNo(vertNo,next) ) != -1) {
+		   if(!visited[adjVertNo])
+			   DFS(adjVertNo,gMatrix,visited);
+		   next = next +1;
+	}
+}
+/**
+ * 广度优先遍历
+ * 利用队列实现
+ */
+void Graph::BFSTraverse() {
+	 std::queue<int> queue;
+	 bool  visited[vertNum];
+	 for(int i=0;i < vertNum;++i)
+		 visited[i] = false;
+	 for(int i=0 ; i < vertNum;++i) {
+		  if(visited[i]) continue;
+		  queue.push(i);
+		  visit(i);// 注意进入队列还未出队列时 即访问该顶点
+		  visited[i] = true;
+		  while(!queue.empty()) {
+			   int curVertNo = queue.front();
+			   queue.pop();
+			   //顶点curVertNo的邻接顶点进入队列
+			   int next = 0,adjVertNo= -1;
+			   	while( next < vertNum && (adjVertNo = adjMatrix.findAdjVertNo(curVertNo,next) ) != -1) {
+			   		   if(!visited[adjVertNo]) {
+			   			   queue.push(adjVertNo);
+			   			   visit(adjVertNo);
+			   			   visited[adjVertNo] = true;
+			   		   }
+			   		   next = next +1;
+			   	}
+		  }
+	 }
+	 std::cout<<std::endl;
+}
+/**
+ * 访问顶点vertNo
+ */
+void Graph::visit(int vertNo) {
+     std::cout<<vertNames[vertNo]<<"\t";
+}
