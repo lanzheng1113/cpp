@@ -48,3 +48,25 @@ void Graph::shotestPathDij(int start,int** gMatrix,bool**pathMatrix,int*distance
            }
       }
 }
+
+/**
+**有向图环检测
+*/
+DFS(G,s)
+    for each vertex v in V(G)
+        status[v] = WHITE
+        /******其他初始化******/
+    for each vertex v in V(G)
+        if(status[v]==WHITE)
+            if !DFS-VISIT(v) = false
+				return false
+
+DFS-VISIT(v)
+    status[v] = GRAY
+    for each vertex t in Adj(v)
+        if status[t] = WHITE
+            DFS-VISIT(t)
+		else if status[t] = GRAY
+			return false
+            /******其他操作******/
+    status[v] = BLACK

@@ -4,51 +4,51 @@
  *  Created on: 2014年12月21日
  *      Author: wangdq
  */
-#include "adjmatrix.h"
+
 #include <limits>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include "adjmatrix.h"
 
+#include "common.h"
 /**
  * 从流读入邻接矩阵数据
  * 例如:
  * -------------------------------------------
- *  1 3   (带权图  顶点数目)
+ *  DN 3   (带权图  顶点数目)
  *  v0 v1 v2  (顶点名称)
- *	 0  4  11
+ *	 0  4  11 (边0-4 权值为11)
  *  6  0  2
- *  3  inf  0
  * --------------------------------------------
  */
 AdjMatrix::AdjMatrix(std::istream &stream) {
+	   Util::skipStreamComment(stream); // 跳过注释
 	   std::string kind;
 	   stream >> kind;
 	   setGraphKind(kind); // 设置图的类型
        stream>>vertNum; // 读入顶点数目
        //创建顶点名称表
        std::string name;
+       matrix.resize(vertNum); // 动态调整向量大小
        for(int i=0 ;i < vertNum;++i) {
 		   stream>>name;
-		   vertexNameVec.push_back(name);
+		   vertNamesVec.push_back(name);
+		   matrix[i].resize(vertNum,unavailable); // 默认顶点间不可到达
        }
-       //创建邻接矩阵
-       matrix = new int*[vertNum];
-       for(int i=0;i< vertNum ;++i)
-       		matrix[i] = new int[vertNum];
-       //初始化邻接矩阵
-       	for(int i=0;i<vertNum;++i)
-       		for(int j=0;j<vertNum;++j) {
-       			 std::string val;
-       			 stream>>val;
-       			 if( (gkind == DN || gkind == UDN ) && (val == "inf" || val == "INF"))
-       				 	 matrix[i][j] = unavailable;
-       			 else {
-       				 	 std::istringstream ss(val);
-       				 	 ss >> matrix[i][j];
-       			 }
-       		}
+       std::string src,dest;
+       int srcNo,destNo,edge;
+       while(stream >> src >> dest >> edge) {
+    	   std::vector<std::string>::iterator iter = std::find(vertNamesVec.begin(),vertNamesVec.end(),src);
+    	   srcNo = iter-vertNamesVec.begin();
+    	   iter = std::find(vertNamesVec.begin(),vertNamesVec.end(),dest);
+    	   destNo =iter-vertNamesVec.begin();
+    	   matrix[srcNo][destNo] = edge;
+    	   if(gkind == UDG || gkind == UDN)
+    		   matrix[destNo][srcNo] = edge;  // 无向图中边保证i-j j-i相同
+       }
 }
+
 void AdjMatrix::setGraphKind(std::string &kind) {
 	  std::transform(kind.begin(), kind.end(),kind.begin(), ::toupper);
 	  if (kind == "DG")
@@ -79,8 +79,7 @@ void AdjMatrix::printDistance(int i,int j) {
 		    std::cout<<matrix[i][j]<<"\t";
 }
 AdjMatrix::~AdjMatrix() {
-	 for(int i=0;i< vertNum ;++i)
-		  delete [] matrix[i];
+
 }
 /**
  * 获取顶点vertNo的从start开始计算的第一个相邻顶点
@@ -100,8 +99,16 @@ int  AdjMatrix::findAdjVertNo(int vertNo,int start) {
 	  else
 		  return -1;
 }
-int ** AdjMatrix::getMatrix() {
-    return matrix;
+
+/**
+ * 列出所有边
+ */
+void AdjMatrix::listAllEdges(std::vector<Edge>&edges) {
+	for(int i=0;i<vertNum;++i)
+				for(int j=0;j<vertNum;++j) {
+					   if((gkind == UDG || gkind == UDN) && i > j )  // 对称的图只列出上三角形部分即可
+						   	   	   continue;
+					   if(matrix[i][j] != unavailable)
+						   edges.push_back(Edge(i,j,matrix[i][j]));
+				}
 }
-
-

@@ -7,6 +7,7 @@ CPP_SRCS += \
 ../src/adjlist.cpp \
 ../src/adjmatrix.cpp \
 ../src/adjmulist.cpp \
+../src/common.cpp \
 ../src/graph.cpp \
 ../src/orthlist.cpp \
 ../src/testDrive.cpp 
@@ -15,6 +16,7 @@ OBJS += \
 ./src/adjlist.o \
 ./src/adjmatrix.o \
 ./src/adjmulist.o \
+./src/common.o \
 ./src/graph.o \
 ./src/orthlist.o \
 ./src/testDrive.o 
@@ -23,6 +25,7 @@ CPP_DEPS += \
 ./src/adjlist.d \
 ./src/adjmatrix.d \
 ./src/adjmulist.d \
+./src/common.d \
 ./src/graph.d \
 ./src/orthlist.d \
 ./src/testDrive.d 
@@ -32,7 +35,7 @@ CPP_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	g++ -std=c++0x -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
