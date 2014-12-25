@@ -70,3 +70,17 @@ DFS-VISIT(v)
 			return false
             /******其他操作******/
     status[v] = BLACK
+/***
+拓扑排序
+***/
+topologicalSort
+	s--入度为0顶点集合
+	l排序结果集
+	while s 不空
+	        取出一个n,添加到L
+	        删除弧尾是n的边,如果与该边相关联的顶点入度减为0，则进入s
+	 if l.length < vertNum
+	 	报错
+	 else
+	    输出l
+	        

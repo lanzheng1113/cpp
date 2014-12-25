@@ -12,6 +12,7 @@
 #include <istream>
 #include <string>
 #include <vector>
+#include <list>
 #include "adjmatrix.h"
 enum VertColor {WHITE,GRAY,BLACK};
 //图
@@ -33,16 +34,22 @@ public:
 	void printMiniSpanTreeKruskal();
 	void printMiniSpanTreeDijkstra();
 	void printArticulationPoint();
+	void unionTest();
+	bool topologicalSort();
+	bool inverseTopologicalSort();
 	~Graph();
 private:
+	void printUnionData(std::vector<int> &root,std::vector<int> &next,std::vector<int> &length);
 	void DFS(int vertNo,std::vector<bool> &visited);
+	bool topoDFS(int vertNo,int &vcount,int &tcount,std::vector<int> &visited,std::vector<int> &topoNum);
     bool udgCycleDetectDFS(int vertNo,std::vector<int> &visited,int &count,std::vector<std::string> &edges);
     bool dgCycleDetectDFS(int vertNo,int &count,std::vector<int> &visited,std::vector<VertColor> &color);
     void articulationDFS(int vertNo,int &count,std::vector<int> &visitedNum,std::vector<int> &low);
     bool unionEdge(std::vector<int> &root,std::vector<int> &next,std::vector<int> &length,int u,int v);
+    void  getCycleMaxEdge(std::vector<int> &root,std::vector<int> &next,std::vector<int> &length,Edge &edgeMax);
 	void visit(int vertNo);
 	void printPath(vector2i & disMatrix,vector2s &pathMatrix);
-	void printMiniSpanningTree(std::vector<Edge> &edges);
+	void printMiniSpanningTree(std::list<Edge> &edges);
 	void printDistance(vector2i& disMatrix,int i,int j);
 	void shortestPathFloyd(vector2s &pathMatrix,vector2i &disMatrix);
 	void shortestPathDijkstra(int start,std::vector<std::string> &path,std::vector<int> &distance) ;

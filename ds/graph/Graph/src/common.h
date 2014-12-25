@@ -23,6 +23,9 @@ public:
 	bool operator < (const Edge &edge) {
 		  return edgeVal < edge.edgeVal;
 	}
+	bool operator ==(const Edge &edge) {
+		return src == edge.src && dest == edge.dest;
+	}
 public:
 	int src,dest;
 	int edgeVal;

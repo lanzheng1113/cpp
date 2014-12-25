@@ -47,6 +47,8 @@ public:
 	}
 	int findAdjVertNo(int vertNo,int start=0);
 	void listAllEdges(std::vector<Edge>&edges);
+	bool isAdj(int i,int j);
+	void getIndegrees(std::vector<int>  &indegrees);
 private:
 	void setGraphKind(std::string &kind);
 private:

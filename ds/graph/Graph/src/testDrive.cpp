@@ -23,6 +23,7 @@ void testCase5(std::istream &istream);
 void testCase6(std::istream &istream);
 void testCase7(std::istream &istream);
 void testCase8(std::istream &istream);
+void testCase9(std::istream &istream);
 
 int main() {
 	string fileName;
@@ -33,7 +34,7 @@ int main() {
 		cerr<<"could not open stream: "<<fileName<<" for reading."<<endl;
 		return 1;
 	}
-	testCase8(fileis);
+	testCase9(fileis);
 	return 0;
 }
 //测试最短路径
@@ -82,14 +83,14 @@ void testCase4(std::istream &istream) {
 //测试无向图中环检测
 void testCase5(std::istream &istream) {
 	Graph graph(istream);//创建图
-	std::cout<<"is there circle ?: \t";
+	std::cout<<"is there cycle ?: \t";
 	bool ret = graph.udgCycleDetect();
 	if(!ret) std::cout<<"no!"<<std::endl;
 }
 //测试有向图中环检测
 void testCase6(std::istream &istream) {
 	Graph graph(istream);//创建图
-	std::cout<<"is there circle ?: \t";
+	std::cout<<"is there cycle ?: \t";
 	bool ret = graph.dgCycleDetect();
 	if(!ret) std::cout<<"no!"<<std::endl;
 }
@@ -101,8 +102,20 @@ void testCase7(std::istream &istream) {
 //测试最小生成树
 void testCase8(std::istream &istream) {
 	Graph graph(istream);//创建图
-	std::cout<<"prim mini spanning tree:"<<std::endl;
+	std::cout<<"Prim mini spanning tree:"<<std::endl;
 	graph.printMiniSpanTreePrim();
 	std::cout<<"kruskal mini spanning tree:"<<std::endl;
 	graph.printMiniSpanTreeKruskal();
+	std::cout<<"Dijkstra mini spanning tree:"<<std::endl;
+	graph.printMiniSpanTreeDijkstra();
+}
+//拓扑排序和逆拓扑排序
+void testCase9(std::istream &istream) {
+	Graph graph(istream);//创建图
+	std::cout<<"Topological sort: "<<std::endl;
+	bool ret = graph.topologicalSort();
+	if(!ret)  std::cout<<"cycle detected!"<<std::endl;
+	std::cout<<"Inverse Topological sort:"<<std::endl;
+	ret = graph.inverseTopologicalSort();
+	if(!ret) std::cout<<"cycle detected!"<<std::endl;
 }

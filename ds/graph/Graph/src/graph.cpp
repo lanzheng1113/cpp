@@ -10,6 +10,8 @@
 #include <iterator>
 #include <algorithm>
 #include <queue>
+#include <list>
+
 Graph::Graph(std::istream &stream):adjMatrix(stream) {
 	vertNum = adjMatrix.getVertexNum();
 	vertNames = adjMatrix.getVertexName();
@@ -345,6 +347,34 @@ bool Graph::unionEdge(std::vector<int>& root,std::vector<int>& next,std::vector<
          std::swap(next[rts],next[rtb]);
          return true;
 }
+void Graph::unionTest() {
+	std::vector<int> root;
+	std::vector<int> next;
+	std::vector<int> length(6,1);
+	for(int i=0;i < 6;++i) {
+		root.push_back(i);
+		next.push_back(i);
+	}
+	printUnionData(root,next,length);
+
+	unionEdge(root,next,length,0,1);
+	printUnionData(root,next,length);
+
+	unionEdge(root,next,length,0,2);
+	printUnionData(root,next,length);
+
+	unionEdge(root,next,length,0,3);
+	printUnionData(root,next,length);
+}
+void Graph::printUnionData(std::vector<int> &root,std::vector<int> &next,std::vector<int> &length) {
+		std::cout<<"\nroot: "<<std::endl;
+		std::copy(root.begin(),root.end(),std::ostream_iterator<int>(std::cout,"\t"));
+		std::cout<<"\nnext: "<<std::endl;
+		std::copy(next.begin(),next.end(),std::ostream_iterator<int>(std::cout,"\t"));
+		std::cout<<"\nlength: "<<std::endl;
+		std::copy(length.begin(),length.end(),std::ostream_iterator<int>(std::cout,"\t"));
+		std::cout<<std::endl;
+}
 /**
  * Prim 最小生成树算法
  * 依次规定顶点集合u到未归并顶点集合v中最小边
@@ -352,7 +382,7 @@ bool Graph::unionEdge(std::vector<int>& root,std::vector<int>& next,std::vector<
  */
 void Graph::printMiniSpanTreePrim() {
      std::vector<Edge> closedges;
-     std::vector<Edge> orderedEdges;
+     std::list<Edge> orderedEdges;
      //初始化closedges为顶点0的边
      for(int i=0;i < vertNum;++i) {
     	 Edge edge(0,i,gMatrix[0][i]);
@@ -387,7 +417,7 @@ void Graph::printMiniSpanTreePrim() {
  */
 void Graph::printMiniSpanTreeKruskal() {
 	 std::vector<Edge> edges;
-	 std::vector<Edge> orderedEdges;
+	 std::list<Edge> orderedEdges;
 	 std::vector<int>  root;
 	 std::vector<int>  next;
 	 std::vector<int>  length(vertNum,1);
@@ -410,9 +440,9 @@ void Graph::printMiniSpanTreeKruskal() {
 	 }
 	 printMiniSpanningTree(orderedEdges);
 }
-void Graph::printMiniSpanningTree(std::vector<Edge> &edges) {
+void Graph::printMiniSpanningTree(std::list<Edge> &edges) {
 	int sum = 0;
-	for(std::vector<Edge>::iterator it = edges.begin();it != edges.end();++it) {
+	for(std::list<Edge>::iterator it = edges.begin();it != edges.end();++it) {
 		std::cout<<vertNames[it->src]<<"-"<<vertNames[it->dest]<<" "<<it->edgeVal<<std::endl;
 		sum += it->edgeVal;
 	}
@@ -423,7 +453,61 @@ void Graph::printMiniSpanningTree(std::vector<Edge> &edges) {
  * 逐个加入边到树中 如果检测到环则删除环中权值最大的边
  */
 void Graph::printMiniSpanTreeDijkstra() {
-
+	 	 std::vector<Edge> edges;
+		 std::list<Edge> orderedEdges;
+		 std::vector<int>  root;
+		 std::vector<int>  next;
+		 std::vector<int>  length(vertNum,1);
+		 //初始化 找出所有边并按大小排序
+		 adjMatrix.listAllEdges(edges);
+		 //初始化union-find 辅助数组
+		 for(int i=0;i < vertNum;++i) {
+			 root.push_back(i);
+			 next.push_back(i);
+		 }
+		 //逐个加入边 如果加入的边构成环则去除环中权值最大边
+		int i = 1;
+		 for(std::vector<Edge>::iterator it = edges.begin(); i < vertNum && it != edges.end();++it)  {
+			 	 orderedEdges.push_back(*it); // 加入边集合
+			 	 std::cout<<"add edge: "<<vertNames[it->src]<<"-"
+			 				 					 		    		<<vertNames[it->dest]<<" "<<it->edgeVal<<std::endl;
+			 	 bool ret = unionEdge(root,next,length,it->src,it->dest);
+			 	 if(ret) {
+			 		 ++i;
+			 	 }else {			// 去除环中权值最大边
+			 		    Edge edgeMax(*it);
+			 		    getCycleMaxEdge(root,next,length,edgeMax); // 获取环中权值最大边
+			 		    //移除最大边
+			 		    orderedEdges.remove(edgeMax);
+			 		    std::cout<<"remove edge: "<<vertNames[edgeMax.src]<<"-"
+			 		    		<<vertNames[edgeMax.dest]<<" "<<edgeMax.edgeVal<<std::endl;
+			 	 }
+			 	printUnionData(root,next,length);
+		 }
+		 printMiniSpanningTree(orderedEdges);
+}
+/**
+ * 获取环中权值最大边
+ * 待完善...
+ */
+void  Graph::getCycleMaxEdge(std::vector<int> &root,std::vector<int> &next,std::vector<int> &length,Edge &edgeMax) {
+	int start,target,nextVert;
+	if(next[edgeMax.src] == edgeMax.dest) {
+		   start = edgeMax.dest;
+		   target = edgeMax.src;
+	}else {
+		  start = edgeMax.src;
+		  target =edgeMax.dest;
+	}
+	//找到一条从start到target的第二条路径 此路径与原来的edgeMax即构成环
+	while(next[start] != target) {
+		  nextVert = next[start];
+		  while(!adjMatrix.isAdj(start,nextVert))
+				nextVert = next[nextVert];
+		  if(gMatrix[start][nextVert] > edgeMax.edgeVal)
+				  edgeMax = Edge(start,nextVert,gMatrix[start][nextVert]);
+		  start = nextVert;
+	}
 }
 /**
  * 寻找连通图中关节点
@@ -467,4 +551,79 @@ void Graph::articulationDFS(int vertNo,int &count,std::vector<int>& visited,std:
 			 start = adjNo+1;
 		}
 		low[vertNo] = min; // 所有邻接顶点访问完毕后设置自己的low值
+}
+/**
+ *
+ * 拓扑排序
+ * 若存在环则返回false 否则返回true
+ * 入度为0则将输出
+ */
+bool Graph::topologicalSort() {
+	std::vector<int>  indegrees(vertNum,0);
+	std::list<int>       inzeros;
+	std::list<int>		   result;
+	//初始化所有顶点的入度
+	adjMatrix.getIndegrees(indegrees);
+	for(std::vector<int>::size_type i=0; i < indegrees.size();++i)
+		  	  	  	  if(indegrees[i] == 0)  inzeros.push_back(i);
+	while(!inzeros.empty()) {
+		      int vertNo = inzeros.front();
+		      inzeros.pop_front();
+		      result.push_back(vertNo);
+		      int start = 0,adjNo = -1;
+		      //相邻顶点的入度减1
+		      while(start < vertNum && (adjNo = adjMatrix.findAdjVertNo(vertNo,start)) != -1) {
+				  if(--indegrees[adjNo]== 0)
+					  inzeros.push_back(adjNo); // 如果入度为0则添加到集合
+				  start = adjNo+1;
+		      }
+	}
+	if(result.size() < vertNum)
+		return false;
+	else {
+		for(std::list<int>::iterator it = result.begin(); it != result.end();++it)
+				  	  	std::cout<<vertNames[*it]<<"\t";
+		 std::cout<<std::endl;
+		 return true;
+	}
+}
+/**
+ * 逆拓扑排序
+ * 存在环则返回false,否则返回true
+ */
+bool Graph::inverseTopologicalSort() {
+	   int tcount ,vcount ;
+	   tcount = vcount = 1;
+	   std::vector<int> visitedNum(vertNum,0);
+	   std::vector<int> topoNum(vertNum,0);
+       for(int i = 0;i < vertNum;++i) {
+    	   if(visitedNum[i] == 0 && !topoDFS(i,vcount,tcount,visitedNum,topoNum))
+    		   	   return false;
+       }
+       //输出结果
+       std::vector<int> result(vertNum,0);
+       for(std::vector<int>::size_type i=0;i < topoNum.size();++i)
+       	   	   	   	   result[topoNum[i]-1] = i;
+       for(std::vector<int>::iterator it = result.begin(); it != result.end();++it)
+       				  	  	std::cout<<vertNames[*it]<<"\t";
+       std::cout<<std::endl;
+       return true;
+}
+/**
+ * 深度优先逆拓扑排序
+ * 存在环则中断返回false ,否则返回true
+ */
+bool Graph::topoDFS(int vertNo,int &vcount,int &tcount,std::vector<int> &visited,std::vector<int> &topoNum) {
+	visited[vertNo] = vcount++;
+	  int start = 0,adjNo = -1;
+	  //访问邻近顶点
+	  while(start < vertNum && (adjNo = adjMatrix.findAdjVertNo(vertNo,start)) != -1) {
+		       if(visited[adjNo] == 0 && ! topoDFS(adjNo,vcount,tcount,visited,topoNum))
+		    	   return false;
+		       else if(topoNum[adjNo] == 0)
+		    	   return false;
+		      start = adjNo+1;
+	  }
+	  topoNum[vertNo] = tcount++; // 所有邻接点访问完毕后设置拓扑排序顺序数
+	  return true;
 }

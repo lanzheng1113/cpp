@@ -112,3 +112,19 @@ void AdjMatrix::listAllEdges(std::vector<Edge>&edges) {
 						   edges.push_back(Edge(i,j,matrix[i][j]));
 				}
 }
+/**
+ * 顶点i与j是否相连
+ */
+bool AdjMatrix::isAdj(int i,int j) {
+	return matrix[i][j] != unavailable;
+}
+/**
+ * 获取顶点的入度
+ */
+void AdjMatrix::getIndegrees(std::vector<int>  &indegrees) {
+	  // 按列遍历
+	  for(int i=0;i < vertNum;++i)
+		  for(int j = 0;j < vertNum;++j)
+			       if(matrix[j][i] != unavailable)
+			    	   	   indegrees[i]++;
+}
