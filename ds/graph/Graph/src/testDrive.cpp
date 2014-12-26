@@ -24,6 +24,7 @@ void testCase6(std::istream &istream);
 void testCase7(std::istream &istream);
 void testCase8(std::istream &istream);
 void testCase9(std::istream &istream);
+void testCase10(std::istream &istream);
 
 int main() {
 	string fileName;
@@ -34,7 +35,7 @@ int main() {
 		cerr<<"could not open stream: "<<fileName<<" for reading."<<endl;
 		return 1;
 	}
-	testCase9(fileis);
+	testCase10(fileis);
 	return 0;
 }
 //测试最短路径
@@ -117,5 +118,11 @@ void testCase9(std::istream &istream) {
 	if(!ret)  std::cout<<"cycle detected!"<<std::endl;
 	std::cout<<"Inverse Topological sort:"<<std::endl;
 	ret = graph.inverseTopologicalSort();
+	if(!ret) std::cout<<"cycle detected!"<<std::endl;
+}
+//测试AOE网关键路径和关键活动
+void testCase10(std::istream &istream) {
+	Graph graph(istream);//创建图
+	bool ret = graph.criticalPath();
 	if(!ret) std::cout<<"cycle detected!"<<std::endl;
 }

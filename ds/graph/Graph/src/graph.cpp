@@ -4,6 +4,7 @@
  *  Created on: 2014年12月20日
  *      Author: wangdq
  */
+
 #include "graph.h"
 #include <iostream>
 #include <sstream>
@@ -11,6 +12,7 @@
 #include <algorithm>
 #include <queue>
 #include <list>
+#include <stack>
 
 Graph::Graph(std::istream &stream):adjMatrix(stream) {
 	vertNum = adjMatrix.getVertexNum();
@@ -198,12 +200,10 @@ void Graph::DFSTraverse() {
 void Graph::DFS(int vertNo,std::vector<bool> & visited) {
 	visit(vertNo); // 访问自身
 	visited[vertNo] = true; // 标记为已经访问
-	int next = 0,adjVertNo = -1;
 	//对自己的临近结点 继续深度优先遍历
-	while( next < vertNum && (adjVertNo = adjMatrix.findAdjVertNo(vertNo,next) ) != -1) {
-		   if(!visited[adjVertNo])
-			   DFS(adjVertNo,visited);
-		   next = next +1;
+	for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(0,start) ) != -1; start = adjNo+1) {
+		   if(!visited[adjNo])
+			   DFS(adjNo,visited);
 	}
 }
 /**
@@ -219,17 +219,15 @@ void Graph::BFSTraverse() {
 		  visit(i);// 注意进入队列还未出队列时 即访问该顶点
 		  visited[i] = true;
 		  while(!queue.empty()) {
-			   int curVertNo = queue.front();
+			   int vertNo = queue.front();
 			   queue.pop();
 			   //顶点curVertNo的邻接顶点进入队列
-			   int next = 0,adjVertNo= -1;
-			   	while( next < vertNum && (adjVertNo = adjMatrix.findAdjVertNo(curVertNo,next) ) != -1) {
-			   		   if(!visited[adjVertNo]) {
-			   			   queue.push(adjVertNo);
-			   			   visit(adjVertNo);
-			   			   visited[adjVertNo] = true;
+			   for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1; start = adjNo+1) {
+			   		   if(!visited[adjNo]) {
+			   			   queue.push(adjNo);
+			   			   visit(adjNo);
+			   			   visited[adjNo] = true;
 			   		   }
-			   		   next = next +1;
 			   	}
 		  }
 	 }
@@ -261,9 +259,8 @@ bool Graph::udgCycleDetect() {
  */
 bool Graph::udgCycleDetectDFS(int vertNo,std::vector<int> &visited,int &count,std::vector<std::string> &edges) {
 	visited[vertNo] = ++count;
-	int start = 0,adjNo = -1;
 	//访问邻近顶点
-	while(start < vertNum && (adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1) {
+	for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(0,start) ) != -1; start = adjNo+1) {
 	   std::string edge = std::to_string(vertNo)+std::to_string(adjNo);
 	   if(vertNo > adjNo)
 			 edge = std::to_string(adjNo)+std::to_string(vertNo); // 保证1-2 2-1只用一个形式1-2存储
@@ -278,7 +275,6 @@ bool Graph::udgCycleDetectDFS(int vertNo,std::vector<int> &visited,int &count,st
 				 return true;
 			 }
 	   }
-	   start = adjNo+1;
 	}
 	return false;
 }
@@ -306,9 +302,8 @@ bool Graph::dgCycleDetect() {
 bool Graph::dgCycleDetectDFS(int vertNo,int& count,std::vector<int>& visited,std::vector<VertColor> &color) {
 	color[vertNo] = GRAY; // 首次访问置为灰色
 	visited[vertNo] = ++count;
-	int start = 0,adjNo = -1;
 	//访问邻近顶点
-	while(start < vertNum && (adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1)  {
+	for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(0,start) ) != -1; start = adjNo+1) {
 		   if(visited[adjNo] == 0 && dgCycleDetectDFS(adjNo,count,visited,color) ) {
 			   return true;
 		   }
@@ -316,7 +311,6 @@ bool Graph::dgCycleDetectDFS(int vertNo,int& count,std::vector<int>& visited,std
 			   std::cout << "cycle detected : "<<vertNames[vertNo] << " to "<<vertNames[adjNo]<<std::endl;
 			   return true;
 		   }
-		   start = adjNo+1;
 	}
 	color[vertNo] = BLACK ; // 所有邻接点访问完毕后置为黑色
 	return false;
@@ -521,12 +515,10 @@ void Graph::printArticulationPoint() {
     articulationDFS(firstAdj,count,visitedNum,low);
     if(count < vertNum) {     // 根节点有两个孩子则也为关节点
     	   std::cout << "articulation point: "<<vertNames[0]<<std::endl;
-    	   int start = firstAdj+1,adjNo = -1;
     	   // 继续后续顶点寻找
-    	   while(start < vertNum && ( adjNo = adjMatrix.findAdjVertNo(0,start)) != -1) {
+    	   for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(0,start) ) != -1; start = adjNo+1) {
     		       if(visitedNum[adjNo] == 0)
     		    	   articulationDFS(adjNo,count,visitedNum,low);
-    		   	   start = adjNo+1;
     	   }
     }
 }
@@ -537,8 +529,7 @@ void Graph::printArticulationPoint() {
 void Graph::articulationDFS(int vertNo,int &count,std::vector<int>& visited,std::vector<int>& low) {
 		visited[vertNo] = ++count;
 		int min = visited[vertNo];
-		int start =0,adjNo = -1;
-		while(start < vertNum && ( adjNo = adjMatrix.findAdjVertNo(vertNo,start)) != -1)  {
+		for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1; start = adjNo+1) {
 			 if(visited[adjNo] == 0) {  // 访问孩子节点  如果其low值比min小则更新
 				 articulationDFS(adjNo,count,visited,low);
 				 if(low[adjNo] < min)
@@ -548,7 +539,6 @@ void Graph::articulationDFS(int vertNo,int &count,std::vector<int>& visited,std:
 			 }else if(visited[adjNo] < min){   // 指向已经访问过的顶点(包括回边和指向父节点的树边)
 				  min = visited[adjNo]; // 注意这里还是要做出判断  先前访问过的回边可能有多条
 			 }
-			 start = adjNo+1;
 		}
 		low[vertNo] = min; // 所有邻接顶点访问完毕后设置自己的low值
 }
@@ -560,25 +550,25 @@ void Graph::articulationDFS(int vertNo,int &count,std::vector<int>& visited,std:
  */
 bool Graph::topologicalSort() {
 	std::vector<int>  indegrees(vertNum,0);
-	std::list<int>       inzeros;
+	std::stack<int>       inzeros;
 	std::list<int>		   result;
+	int count = 0;
 	//初始化所有顶点的入度
 	adjMatrix.getIndegrees(indegrees);
 	for(std::vector<int>::size_type i=0; i < indegrees.size();++i)
-		  	  	  	  if(indegrees[i] == 0)  inzeros.push_back(i);
+		  	  	  	  if(indegrees[i] == 0)  inzeros.push(i);
 	while(!inzeros.empty()) {
-		      int vertNo = inzeros.front();
-		      inzeros.pop_front();
+		      int vertNo = inzeros.top();
+		      inzeros.pop();
+		      ++count;
 		      result.push_back(vertNo);
-		      int start = 0,adjNo = -1;
 		      //相邻顶点的入度减1
-		      while(start < vertNum && (adjNo = adjMatrix.findAdjVertNo(vertNo,start)) != -1) {
+		      for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1; start = adjNo+1) {
 				  if(--indegrees[adjNo]== 0)
-					  inzeros.push_back(adjNo); // 如果入度为0则添加到集合
-				  start = adjNo+1;
+					  inzeros.push(adjNo); // 如果入度为0则添加到集合
 		      }
 	}
-	if(result.size() < vertNum)
+	if(count < vertNum)
 		return false;
 	else {
 		for(std::list<int>::iterator it = result.begin(); it != result.end();++it)
@@ -615,15 +605,97 @@ bool Graph::inverseTopologicalSort() {
  */
 bool Graph::topoDFS(int vertNo,int &vcount,int &tcount,std::vector<int> &visited,std::vector<int> &topoNum) {
 	visited[vertNo] = vcount++;
-	  int start = 0,adjNo = -1;
 	  //访问邻近顶点
-	  while(start < vertNum && (adjNo = adjMatrix.findAdjVertNo(vertNo,start)) != -1) {
+	  for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1; start = adjNo+1) {
 		       if(visited[adjNo] == 0 && ! topoDFS(adjNo,vcount,tcount,visited,topoNum))
 		    	   return false;
 		       else if(topoNum[adjNo] == 0)
 		    	   return false;
-		      start = adjNo+1;
 	  }
 	  topoNum[vertNo] = tcount++; // 所有邻接点访问完毕后设置拓扑排序顺序数
 	  return true;
+}
+/**
+ * 求AOE网的关键路径
+ * 关键在于求关键活动
+ * 活动用边表示 a = <i,j>
+ * a最早开始时间即  e(a) = ev(i)
+ * a最迟开始时间即  l(a) = lv(j)-duration(a)
+ */
+bool Graph::criticalPath() {
+	std::vector<int> earliestTime(vertNum,0);
+	std::vector<int> latestTime(vertNum,0);
+	std::stack<int> invTopoStack;
+	//利用拓扑排序求取事件最早发生时间
+	if(!topoCriticalPath(earliestTime,invTopoStack))
+		return false;
+	std::fill(latestTime.begin(),latestTime.end(),earliestTime[vertNum-1]);
+	//利用逆拓扑序列求取事件最迟发生时间
+    while(!invTopoStack.empty()) {
+    	int vertNo = invTopoStack.top();
+    	invTopoStack.pop();
+    	 for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1; start = adjNo+1) {
+    		      if(latestTime[adjNo]-gMatrix[vertNo][adjNo] < latestTime[vertNo])
+    		    	  latestTime[vertNo]= latestTime[adjNo]-gMatrix[vertNo][adjNo];
+    	}
+    }
+    /*
+    std::copy(earliestTime.begin(),earliestTime.end(),std::ostream_iterator<int>(std::cout,"\t"));
+    std::cout<<std::endl;
+    std::copy(latestTime.begin(),latestTime.end(),std::ostream_iterator<int>(std::cout,"\t"));
+    std::cout<<std::endl;*/
+    //输出关键路径
+    std::vector<int> verts;
+    printCriticalPath(earliestTime,latestTime,0,verts);
+    return true;
+}
+/**
+ * 递归打印关键路径
+ */
+void Graph::printCriticalPath(std::vector<int> &earliestTime,std::vector<int> &latestTime,int vertNo,std::vector<int> &verts) {
+	verts.push_back(vertNo);
+    int count = 0;
+    for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1; start = adjNo+1) {
+    			if(latestTime[adjNo]-gMatrix[vertNo][adjNo]-earliestTime[vertNo] == 0) {		 // 是关键活动
+    				      std::vector<int> vertCopy(verts); // 传递副本
+    				      printCriticalPath(earliestTime,latestTime,adjNo,vertCopy);
+    				      count++;
+    			}
+    }
+	if(count == 0) {
+		   int sum = 0;
+		   for(std::vector<int>::size_type i=0;i < verts.size()-1;++i) {
+			   std::cout<<vertNames[verts[i]]
+			  			   				<<"-"<<vertNames[verts[i+1]]<<" "<<gMatrix[verts[i]][verts[i+1]]<<std::endl;
+			   sum += gMatrix[verts[i]][verts[i+1]];
+		   }
+		   std::cout<<"critical path length: "<<sum<<std::endl;
+	}
+}
+/**
+ * 利用拓扑排序求事件(顶点表示)的最早开始事件
+ */
+bool Graph::topoCriticalPath(std::vector<int> &earliestTime,std::stack<int> &invTopoStack) {
+		std::vector<int>  indegrees(vertNum,0);
+		std::stack<int>    inzeros;
+		int count = 0;
+		//初始化所有顶点的入度
+		adjMatrix.getIndegrees(indegrees);
+	    inzeros.push(0);
+		while(!inzeros.empty()) {
+			    int vertNo = inzeros.top();
+			    invTopoStack.push(vertNo); // 进入逆拓扑排序栈
+			    inzeros.pop(); // 从当前拓扑排序栈退出
+			    ++count;
+			    for(int start =0,adjNo = -1;  ( adjNo = adjMatrix.findAdjVertNo(vertNo,start) ) != -1; start = adjNo+1) {
+			    		 if(earliestTime[vertNo]+gMatrix[vertNo][adjNo] > earliestTime[adjNo])
+			    			 earliestTime[adjNo] = earliestTime[vertNo]+gMatrix[vertNo][adjNo];
+			    		 if(--indegrees[adjNo] == 0)
+			    			   inzeros.push(adjNo);
+			    }
+		}
+     if(count < vertNum)
+    	 return false;
+     else
+    	 return true;
 }

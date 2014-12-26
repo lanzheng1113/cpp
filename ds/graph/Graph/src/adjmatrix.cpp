@@ -87,7 +87,7 @@ AdjMatrix::~AdjMatrix() {
  * 如果找到则返回顶点索引 否则返回-1
  */
 int  AdjMatrix::findAdjVertNo(int vertNo,int start) {
-	  int i=start;
+	int i=start;
 	  for(;i < vertNum;++i) {
 		  if(i == vertNo || matrix[vertNo][i] == unavailable)
 			  continue;

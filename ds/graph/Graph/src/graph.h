@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <stack>
 #include "adjmatrix.h"
 enum VertColor {WHITE,GRAY,BLACK};
 //图
@@ -37,10 +38,13 @@ public:
 	void unionTest();
 	bool topologicalSort();
 	bool inverseTopologicalSort();
+	bool criticalPath();
 	~Graph();
 private:
+	void printCriticalPath(std::vector<int> &earliestTime,std::vector<int> &latestTime,int vertNo,std::vector<int> &verts);
 	void printUnionData(std::vector<int> &root,std::vector<int> &next,std::vector<int> &length);
 	void DFS(int vertNo,std::vector<bool> &visited);
+	bool topoCriticalPath(std::vector<int> &earliestTime,std::stack<int> &invTopoStack);
 	bool topoDFS(int vertNo,int &vcount,int &tcount,std::vector<int> &visited,std::vector<int> &topoNum);
     bool udgCycleDetectDFS(int vertNo,std::vector<int> &visited,int &count,std::vector<std::string> &edges);
     bool dgCycleDetectDFS(int vertNo,int &count,std::vector<int> &visited,std::vector<VertColor> &color);
