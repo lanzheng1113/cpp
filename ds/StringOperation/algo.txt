@@ -1,0 +1,31 @@
+1.next表计算
+void findNext(string& p,vector<int>& next) {
+      int k = -1,j=1;
+      int plen = p.length();
+      next[0] = -1;
+      while(j < plen) {
+    	   if(k == -1) {   // 找不到p[k] = p[j-1]
+    		   next[j] = ++k;
+    		   ++j;
+    	   }else if(p[k] == p[j-1]) {  // 找到p[k] = p[j-1]
+    		   next[j] = ++k; // 设置next[j],k也为next[j]
+    		   ++j; // 继续计算
+    	   }else {
+    		   k = next[k];	// k指向下一个索引 j保持不变
+    	   }
+      }
+}
+简化上述代码:
+void findNext(string& p,vector<int>& next) {
+      int k = -1,j = 0;
+      int plen = p.length();
+      next[0] = -1;
+      while(j < plen-1) {
+    	   if(k == -1 || p[k] == p[j]) {   //比较p[j]与p[k]  计算next[j+1]
+    		   ++j;
+    		   next[j] = ++k;
+    	   }else {
+    		   k = next[k];	// k指向下一个索引 j保持不变
+    	   }
+      }
+}

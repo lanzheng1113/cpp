@@ -40,7 +40,7 @@ float prevX = 0.0f,prevY =0.0f;
 int angle = 0;
 
 float side = 3.0f;
-int level = 6;
+int level = 1;
 
 
 
