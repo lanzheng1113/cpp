@@ -14,7 +14,7 @@
 #include "btree.h"
 
 /**
- * 边类
+ * B-Tree边类
  */
 struct BTreeEdge {
 	BTreeEdge(const std::string &f,const std::string &t,int fIndex,int tIndex,bool isWest=true):
@@ -39,7 +39,7 @@ struct BTreeEdge {
 	bool west;
 };
 /**
- * 利用绘制B-Tree
+ * 利用Graphviz绘制B-Tree
  * 1)将树形写入.dot文件
  * 2)利用Graphviz程序转换.dot文件为png图片
  *    dot转换为图片阶段 系统必须安装有graphviz并配置有dot命令 否则失效
