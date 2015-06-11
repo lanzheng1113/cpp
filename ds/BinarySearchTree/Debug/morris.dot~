@@ -1,0 +1,7 @@
+digraph BST-Morris {
+	node[shape=plaintext]
+    10->5
+    10->20
+    5->3
+    5->7
+}
