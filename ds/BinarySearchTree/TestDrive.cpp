@@ -57,7 +57,7 @@ int main(int argc,char** argv) {
 void testCase0() {
 	 int insertEle[] = {20,15,30,17,25,19,40,32,50};
 	 BST bst;
-	 BTreePrinter::prefix=std::string("BST-testcase0-bymerging");
+	 BiTreePrinter::prefix=std::string("BST-testcase0-bymerging");
 	 for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin) {
 		  bst.insert(*begin);
 	 }
@@ -129,7 +129,7 @@ void testCase1() {
  */
 void testCase2() {
 	 int insertEle[] = {9,7,6,3,4,2,5,1,0,8};
-	 BTreePrinter::prefix=std::string("BST-testcase2");
+	 BiTreePrinter::prefix=std::string("BST-testcase2");
 	 std::sort(insertEle,insertEle+sizeof(insertEle) / sizeof(insertEle[0]));  // sort the insertEle
 	 BST bst;
 	 bst.bwritePng = false;
@@ -143,7 +143,7 @@ void testCase2() {
 void testCase3() {
 	int insertEle[] = {20,15,30,17,25,19,40,32,50};
 	 DSWTree dsw;
-	 BTreePrinter::prefix=std::string("DSW");
+	 BiTreePrinter::prefix=std::string("DSW");
 	 dsw.bwritePng = false;
 	 for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin) {
 		  dsw.insert(*begin);
@@ -159,7 +159,7 @@ void testCase3() {
 void testCase4() {
 	int insertEle[] = {13,24,37,90,53,10,30,27,15,7,41,35};
 	 AVLTree avl;
-	 BTreePrinter::prefix="AVL-insert";
+	 BiTreePrinter::prefix="AVL-insert";
 	 for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin) {
 		  bool ret = avl.insert(*begin);
 		  std::cout<< "insert: "<< *begin <<" "<< (ret ? "success" : "failed")<< std::endl;
@@ -173,7 +173,7 @@ void testCase5() {
 	int insertEle[] = {13,24,37,90,53,10,30,27,15,7,41,35};
 	int removeEles[] = {10,15,37,35,24,30};
 	 AVLTree avl;
-	 BTreePrinter::prefix = "AVL-removeByMerging";
+	 BiTreePrinter::prefix = "AVL-removeByMerging";
 	 avl.bwritePng = false;
 	 for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin)
 		   avl.insert(*begin);
@@ -192,7 +192,7 @@ void testCase6() {
 	int insertEle[] = {13,24,37,90,53,10,30,27,15,7,41,35};
 	int removeEles[] = {10,15,37,35,24,30};
 	 AVLTree avl;
-	 BTreePrinter::prefix  = "AVL-removeByCopying";
+	 BiTreePrinter::prefix  = "AVL-removeByCopying";
 	 avl.bwritePng = false;
 	 for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin)
 		   avl.insert(*begin);
@@ -212,7 +212,7 @@ void testCase7() {
 	 int searchEle[] = {44,66,88};
 	 int removeEle[] = {55,88};
 	 SplayTree stree;
-	 BTreePrinter::prefix=std::string("SplayTree");
+	 BiTreePrinter::prefix=std::string("SplayTree");
 	 for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin) {
 		 stree.insert(*begin);
 	 }
@@ -272,7 +272,7 @@ void testCase8() {
 void testCase9() {
 	int insertEle[] = {23,14,28,10,19,26,30,8,12,15,22,25,27,29,32};
 	BST bst;
-	BTreePrinter::prefix = std::string("bigBST");
+	BiTreePrinter::prefix = std::string("bigBST");
 	for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin) {
 		  bst.insert(*begin);
 	}
@@ -287,30 +287,30 @@ void testCase10() {
 	BST bst;
 	bst.bwritePng = false;
 	bst.bshowVisitInfo = false;
-	BTreePrinter::prefix = std::string("traverse");
+	BiTreePrinter::prefix = std::string("traverse");
 	for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin) {
 		  bst.insert(*begin);
 	}
 	bst.bwritePng = true;
 	bst.toPng("initial BST");
 
-	BTreePrinter::prefix = std::string("traverse-preorder");
-	BTreePrinter::fileCounter = 1;
+	BiTreePrinter::prefix = std::string("traverse-preorder");
+	BiTreePrinter::fileCounter = 1;
 	bst.toPng("BST pre-order traversing");
 	bst.preorder();
 
-	BTreePrinter::prefix = std::string("traverse-inorder");
-	BTreePrinter::fileCounter = 1;
+	BiTreePrinter::prefix = std::string("traverse-inorder");
+	BiTreePrinter::fileCounter = 1;
 	bst.toPng("BST in-order traversing");
 	bst.inorder();
 
-	BTreePrinter::prefix = std::string("traverse-postorder");
-	BTreePrinter::fileCounter = 1;
+	BiTreePrinter::prefix = std::string("traverse-postorder");
+	BiTreePrinter::fileCounter = 1;
 	bst.toPng("BST post-order traversing");
 	bst.postorder();
 
-	BTreePrinter::prefix = std::string("traverse-breadthfirst");
-	BTreePrinter::fileCounter = 1;
+	BiTreePrinter::prefix = std::string("traverse-breadthfirst");
+	BiTreePrinter::fileCounter = 1;
 	bst.toPng("BST breadth first traversing");
 	bst.breadthFirst();
 	std::cout << "\n\n";
@@ -322,7 +322,7 @@ void testCase11() {
 	int insertEle[] = {10,5,20,3,7};
 	BST bst;
 	bst.bwritePng = false;
-	BTreePrinter::prefix = std::string("traverse-Morris");
+	BiTreePrinter::prefix = std::string("traverse-Morris");
 	for (int * begin = insertEle;begin != insertEle+sizeof(insertEle) / sizeof(insertEle[0]) ;++begin) {
 		  bst.insert(*begin);
 	}
@@ -351,13 +351,13 @@ void testCase12() {
 	std::cout << "input a filename to save the BST:"<<std::endl;
 	std::string filename;
 	std::getline (std::cin,filename);
-	BTreePrinter::prefix = filename;
+	BiTreePrinter::prefix = filename;
 
 	std::cin.clear();
 	std::cout << "input a picture number to order:"<<std::endl;
 	int number;
 	std::cin >> number;
-	BTreePrinter::fileCounter = number;
+	BiTreePrinter::fileCounter = number;
 
 
 	bst.bwritePng = true;

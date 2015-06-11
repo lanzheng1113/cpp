@@ -12,10 +12,10 @@
 #include "bst.h"
 
 /**
- * 边类
+ * BST边类
  */
-struct Edge {
-	Edge(const std::string &f,const std::string &t,bool vis=true): from(f), to(t), isVisiable(vis) {
+struct BSTEdge {
+	BSTEdge(const std::string &f,const std::string &t,bool vis=true): from(f), to(t), isVisiable(vis) {
 	}
     std::string toString() {
     	if(isVisiable)
@@ -35,18 +35,17 @@ struct Edge {
  *    利用系统命令例如: system ("dot example.dot -Tpng -o 1.png");转换为图片
  *    关于Graphviz更多内容参见:http://www.graphviz.org
  */
-class BTreePrinter {
+class BiTreePrinter {
 public:
-    static void BSTtoPng(const std::string &desp=std::string(),const BSTNode* pcur=0);
+    static void toPng(const BST *bst,const std::string &desp=std::string(),const BSTNode* pcur=0);
+    static  std::string intToString(int i);
     static std::string fontColor,fillColor,currentFillColor,currentFontColor,edgeColor,arrowheadType,width,height,fontsize; // 参数
     static std::string prefix;	// 文件名前缀
-    static const BST *bst;		// 绑定的BST
     static long fileCounter;	//文件编号
 private:
     static void printNull(std::string parentId, std::string virtualId, std::ofstream &stream);
-    static  std::string intToString(int i);
-    static void addEdge(std::vector<std::string> &invisNodeVec,std::vector<Edge> &edgeVec,const BSTNode* from);
-    static void writePng(std::vector<std::string> &invisNodeVec,std::vector<Edge> &edgeVec,const std::string& desp,const BSTNode* pcur=0);
+    static void addEdge(std::vector<std::string> &invisNodeVec,std::vector<BSTEdge> &edgeVec,const BSTNode* from);
+    static void writePng(std::vector<std::string> &invisNodeVec,std::vector<BSTEdge> &edgeVec,const std::string& desp,const BSTNode* pcur=0);
     static std::string getNextFilename();
 
 };

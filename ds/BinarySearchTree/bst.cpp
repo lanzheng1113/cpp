@@ -486,7 +486,6 @@ void BST::rightRotate(BSTNode* p) {
  */
 void BST::toPng(const std::string &desp,const BSTNode* pcur) const{
 	if(bwritePng) {
-		BTreePrinter::bst = this;
-		BTreePrinter::BSTtoPng(desp,pcur);
+		BiTreePrinter::toPng(this,desp,pcur);
 	}
 }

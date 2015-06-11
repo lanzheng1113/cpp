@@ -11,19 +11,18 @@
 #include <sstream>
 #include "treeprinter.h"
 
-std::string BTreePrinter::fontColor="black",BTreePrinter::fillColor="#FFFFFF",
-				BTreePrinter::currentFillColor="red",BTreePrinter::width="0.5",
-				BTreePrinter::height="0.5",BTreePrinter::fontsize="16",BTreePrinter::currentFontColor="black",
-				BTreePrinter::edgeColor="blue",BTreePrinter::arrowheadType="normal";
-long BTreePrinter::fileCounter = 1;
-std::string BTreePrinter::prefix="BST";
-const BST* BTreePrinter::bst = 0;
+std::string BiTreePrinter::fontColor="black",BiTreePrinter::fillColor="#FFFFFF",
+				BiTreePrinter::currentFillColor="red",BiTreePrinter::width="0.5",
+				BiTreePrinter::height="0.5",BiTreePrinter::fontsize="16",BiTreePrinter::currentFontColor="black",
+				BiTreePrinter::edgeColor="blue",BiTreePrinter::arrowheadType="normal";
+long BiTreePrinter::fileCounter = 1;
+std::string BiTreePrinter::prefix="BST";
 /**
  * 将绑定的BST转换为图片
  * desp为描述字符串
  * pcur指向当前节点
  */
-void BTreePrinter::BSTtoPng(const std::string &desp,const BSTNode* pcur)
+void BiTreePrinter::toPng(const BST *bst,const std::string &desp,const BSTNode* pcur)
 {
 	if(bst == 0) {
 		std::cerr << "Printer not bind to any BST"<<std::endl;
@@ -33,7 +32,7 @@ void BTreePrinter::BSTtoPng(const std::string &desp,const BSTNode* pcur)
 		return;
 	std::vector<std::string> invisNodeVec;
 	std::vector<std::string> visNodeVec;
-	std::vector<Edge> edgeVec;
+	std::vector<BSTEdge> edgeVec;
 	std::queue<const BSTNode *> nodeQueue;
 	nodeQueue.push(bst->getRoot());
 	while(!nodeQueue.empty()) {		// 广度优先遍历
@@ -51,29 +50,29 @@ void BTreePrinter::BSTtoPng(const std::string &desp,const BSTNode* pcur)
 /**
  * 添加结点from相关的边
  */
-void BTreePrinter::addEdge(std::vector<std::string> &invisNodeVec,std::vector<Edge> &edgeVec,const BSTNode* from){
+void BiTreePrinter::addEdge(std::vector<std::string> &invisNodeVec,std::vector<BSTEdge> &edgeVec,const BSTNode* from){
 	std::string fromId = from->toString();
 	std::string virtualId=std::string("v")+fromId;
 	   if(from->left == 0 && from->right == 0)
 		   return;
 	   invisNodeVec.push_back(virtualId);
 	   if(from->left != 0 && from->right != 0) {
-		   edgeVec.push_back(Edge(fromId,from->left->toString()));
-		   edgeVec.push_back(Edge(fromId,virtualId,false));
-		   edgeVec.push_back(Edge(fromId,from->right->toString()));
+		   edgeVec.push_back(BSTEdge(fromId,from->left->toString()));
+		   edgeVec.push_back(BSTEdge(fromId,virtualId,false));
+		   edgeVec.push_back(BSTEdge(fromId,from->right->toString()));
 	   }else if(from->left == 0) {
-		   edgeVec.push_back(Edge(fromId,virtualId,false));
-		   edgeVec.push_back(Edge(fromId,from->right->toString()));
+		   edgeVec.push_back(BSTEdge(fromId,virtualId,false));
+		   edgeVec.push_back(BSTEdge(fromId,from->right->toString()));
 	   }else {
-		   edgeVec.push_back(Edge(fromId,from->left->toString()));
-		   edgeVec.push_back(Edge(fromId,virtualId,false));
+		   edgeVec.push_back(BSTEdge(fromId,from->left->toString()));
+		   edgeVec.push_back(BSTEdge(fromId,virtualId,false));
 	   }
 }
 /**
  * 写入dot文件并转换为png
  * 可以根据需要修改此部分参数
  */
-void BTreePrinter::writePng(std::vector<std::string> &invisNodeVec,std::vector<Edge> &edgeVec,const std::string& desp,const BSTNode* pcur) {
+void BiTreePrinter::writePng(std::vector<std::string> &invisNodeVec,std::vector<BSTEdge> &edgeVec,const std::string& desp,const BSTNode* pcur) {
 		long count = fileCounter;
 		std::string filename = getNextFilename();
 		std::ofstream stream(filename.c_str());
@@ -106,7 +105,7 @@ void BTreePrinter::writePng(std::vector<std::string> &invisNodeVec,std::vector<E
 		}
 	    //print edges
 	    stream << "\t/* edges*/" << std::endl;
-	    for(std::vector<Edge>::iterator it = edgeVec.begin(); it != edgeVec.end();++it)
+	    for(std::vector<BSTEdge>::iterator it = edgeVec.begin(); it != edgeVec.end();++it)
 	    	   stream <<"\t" << (*it).toString() << std::endl;
 	    stream <<  "}"<< std::endl;
 		stream.close();
@@ -119,7 +118,7 @@ void BTreePrinter::writePng(std::vector<std::string> &invisNodeVec,std::vector<E
 /**
  * 获取下一个文件名
  */
-std::string  BTreePrinter::getNextFilename() {
+std::string  BiTreePrinter::getNextFilename() {
 	   const std::string ext = ".dot";
 	   std::string filename(prefix);
 		std::ostringstream oss;

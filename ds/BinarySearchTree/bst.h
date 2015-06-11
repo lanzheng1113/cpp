@@ -17,7 +17,7 @@ class BST;
 class AVLTree;
 class DSWTree;
 class SplayTree;
-class BTreePrinter;
+class BiTreePrinter;
 /**
  * 二叉树搜索树结点类BSTNode
  *  暂时处理整型数据
@@ -40,7 +40,7 @@ private:
 	      friend class AVLTree;    // 平衡二叉树
 	      friend class DSWTree;	// DSW算法实现的
 	      friend class SplayTree; // 伸展树
-	      friend class BTreePrinter;	// 将BST转换为图片的类
+	      friend class BiTreePrinter;	// 将BST转换为图片的类
 };
 
 /**
