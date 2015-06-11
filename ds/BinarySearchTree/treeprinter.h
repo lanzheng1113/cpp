@@ -38,12 +38,10 @@ struct BSTEdge {
 class BiTreePrinter {
 public:
     static void toPng(const BST *bst,const std::string &desp=std::string(),const BSTNode* pcur=0);
-    static  std::string intToString(int i);
     static std::string fontColor,fillColor,currentFillColor,currentFontColor,edgeColor,arrowheadType,width,height,fontsize; // 参数
     static std::string prefix;	// 文件名前缀
     static long fileCounter;	//文件编号
 private:
-    static void printNull(std::string parentId, std::string virtualId, std::ofstream &stream);
     static void addEdge(std::vector<std::string> &invisNodeVec,std::vector<BSTEdge> &edgeVec,const BSTNode* from);
     static void writePng(std::vector<std::string> &invisNodeVec,std::vector<BSTEdge> &edgeVec,const std::string& desp,const BSTNode* pcur=0);
     static std::string getNextFilename();
