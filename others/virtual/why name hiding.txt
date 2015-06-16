@@ -1,0 +1,42 @@
+https://groups.google.com/forum/#!topic/comp.lang.c++.moderated/6v-FP5VnXfs
+
+
+I think the normal example is like this:
+
+#include <cassert>
+
+struct Base {
+
+};
+
+struct Derived {
+  bool doSomething(long) { return true; }
+};
+
+int main() {
+  Derived d;
+  assert(d.doSomething(1));
+}
+
+Now a helpful programmer comes along and adds a method to
+Base:
+
+struct Base {
+  bool doSomething(int) { return false; }
+};
+
+Under current rules, the code continues to work, as the
+call still invokes Derived::doSomething (which returns
+true).  If Base::doSomething was implicitly added to the
+set of visible functions for overload resolution then
+the code would break.
+
+I'm not sure that I find this argument persuasive;
+changing a base class does tend to be a fragile operation.
+On the other hand, without the current rules even adding
+a private helper method to a base class could cause code
+to stop compiling (because overload resolution would
+choose the base class method and then access control
+would rule the call illegal).
+
+-- James Dennett
